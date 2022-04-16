@@ -70,13 +70,13 @@ function getCfgArray(
   data: any[],
   xField: string,
   fields: string[],
-  unit: number[],
+  units: number[],
   start?: any
 ): TimeCfgArray {
   let cfgArray = [];
   for (let i = 0, len = fields.length; i < len; i++) {
     const field = fields[i];
-    const times = getTimes(data, xField, field, unit[i], start);
+    const times = getTimes(data, xField, field, units[i], start);
     cfgArray.push({
       field,
       times,
