@@ -44,9 +44,10 @@ function pickAttrs(element, attrNames: string[]) {
 
 // TODO 后续实现不同的插值计算方法
 function interpolateTimes() {}
-function getTimesByField(data: any[], field: string, isX: boolean, unit: number, start?: any) {
+function getTimesByField(data: any[], field: string, isX: boolean, unit?: number, start?: any) {
   let times = {};
-
+  let _unit = 250;
+  if (unit) _unit = unit;
   let fieldValues = [];
   let startIndex = 0;
 
