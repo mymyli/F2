@@ -85,10 +85,12 @@ const data = [
   },
 ];
 
-const delayCfg = processUserOpt(data, {
+const delay = processUserOpt(data, {
   xField: '月份',
-  fields: ['月份', 'name'],
-  unit: 200,
+  fields: [
+    { field: '月份', start: 'Feb.', unit: 2000 },
+    { field: 'name', start: 'Berlin', unit: 500 },
+  ],
 });
 
 const context = document.getElementById('container').getContext('2d');
@@ -107,7 +109,7 @@ const { props } = (
         }}
         animation={{
           appear: (item) => {
-            return processAnimationTypeCfg({ delay: delayCfg }, item);
+            return processAnimationTypeCfg({ delay }, item);
           },
         }}
       />

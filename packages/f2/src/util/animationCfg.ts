@@ -1,19 +1,30 @@
-import { valuesOfKey, sortBy, isArray, pick, filter } from '@antv/util';
+import { valuesOfKey, sortBy, isArray, pick } from '@antv/util';
 
-export type UserOpt = {
+//#region types
+type UserOpt = {
   xField: string;
   fields?: string[];
   units?: number[];
-  start?: any;
-  [k: string]: any;
+  starts?: any[];
+  //   [k: string]: any;
 };
 
-export type TimeCfg = {
+type fieldCfg = {
+  field: string | number;
+  start: any;
+  unit: number;
+};
+type fieldsCfg = {
+  xField: any;
+  fields: fieldCfg[];
+};
+
+type TimeCfg = {
   field: string;
   times: { [k: string]: number };
 };
-
-export type TimeCfgArray = TimeCfg[];
+type TimeCfgArray = TimeCfg[];
+//#endregion
 
 function getFieldValues(data: any[], field: string) {
   return valuesOfKey(data, field);
@@ -60,23 +71,19 @@ function getTimesByField(data: any[], field: string, isX: boolean, unit: number,
   return times;
 }
 
-function getTimes(data: any[], xField: string, field: string, unit: number, start?: any) {
+function getTimes(data: any[], xField, field, start?, unit?) {
   let isX = false;
   isX = field === xField;
   return getTimesByField(data, field, isX, unit, start);
 }
 
-function getCfgArray(
-  data: any[],
-  xField: string,
-  fields: string[],
-  units: number[],
-  start?: any
-): TimeCfgArray {
+// userOpt = {xField:"", fields:[{},{}]}
+function getCfgArray(data, xField, fields): TimeCfgArray {
   let cfgArray = [];
   for (let i = 0, len = fields.length; i < len; i++) {
-    const field = fields[i];
-    const times = getTimes(data, xField, field, units[i], start);
+    const f = fields[i];
+    const { field, start, unit } = f;
+    const times = getTimes(data, xField, field, start, unit);
     cfgArray.push({
       field,
       times,
@@ -88,9 +95,9 @@ function getCfgArray(
 /**
  * 根据原始数据集和用户time设置计算得到times配置
  * @param data 原始数据集
- * @param userDelayCfg 用户time设置
+ * @param userOpt 用户设置
  */
-export function processUserOpt(data: any[], userOpt: UserOpt): TimeCfgArray {
+export function processUserOpt(data: any[], userOpt: number | fieldsCfg): number | TimeCfgArray {
   if (!data || !data.length) {
     throw new Error('"data" required when process user option');
   }
@@ -99,25 +106,16 @@ export function processUserOpt(data: any[], userOpt: UserOpt): TimeCfgArray {
     return userOpt;
   }
 
-  const { xField, fields, units, start } = userOpt;
-
+  const { xField, fields } = userOpt;
   if (!xField) throw new Error('"xField" required by time configuration but get null');
 
-  let _fields = [xField];
+  let _fields = [{ field: xField, start: null, unit: 0 }];
   if (fields && !isArray(fields)) throw new Error('"fields" must be Array');
   if (fields && fields.length) {
     _fields = fields;
   }
 
-  let _unit = [1500, 500];
-  if (units && !isArray(units)) throw new Error('"units" must be Array');
-  if (units && units.length) {
-    units.forEach((u, i) => {
-      _unit[i] = u;
-    });
-  }
-
-  return getCfgArray(data, xField, _fields, _unit, start);
+  return getCfgArray(data, xField, _fields);
 }
 
 function parseCfg(cfgs, item) {
@@ -133,7 +131,11 @@ function parseCfg(cfgs, item) {
         time += times[item];
       } else {
         const { origin } = item;
-        time += times[origin[field]];
+        if (origin) {
+          time += times[origin[field]];
+        } else {
+          time += times[item[field]];
+        }
       }
     }
     return time;
@@ -148,6 +150,7 @@ function parseCfg(cfgs, item) {
  */
 export function processAnimationTypeCfg(animationCfg, item) {
   let typeCfg = {};
+  typeCfg = animationCfg;
 
   const { delay: uDelayCfg, duration: uDurationCfg, easing } = animationCfg;
 

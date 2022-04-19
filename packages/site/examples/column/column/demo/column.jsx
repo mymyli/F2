@@ -42,8 +42,7 @@ const duration = 1000;
 // 差异化配置需经processUserOpt方法处理
 const delay = processUserOpt(data, {
   xField: 'year',
-  fields: ['year'],
-  unit: 500,
+  fields: [{ field: 'year', start: '1956 年', unit: 500 }],
 });
 
 const context = document.getElementById('container').getContext('2d');

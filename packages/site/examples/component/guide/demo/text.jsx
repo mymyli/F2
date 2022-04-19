@@ -11,10 +11,23 @@ const data = [
   { genre: 'Other', sold: 150, type: 'a' },
 ];
 
+const delay = processUserOpt(data, {
+  xField: 'genre',
+  fields: [{ field: 'genre', unit: 500 }],
+});
+
 const { props } = (
   <Canvas context={context} pixelRatio={window.devicePixelRatio}>
     <Chart data={data}>
-      <Interval x="genre" y="sold" />
+      <Interval
+        x="genre"
+        y="sold"
+        animation={{
+          appear: (item) => {
+            return processAnimationTypeCfg({ delay }, item);
+          },
+        }}
+      />
       {data.map((item) => {
         const { sold } = item;
         return (
@@ -30,6 +43,23 @@ const { props } = (
             }}
             offsetY={-20}
             offsetX={-15}
+            animation={{
+              update: (item) => {
+                return processAnimationTypeCfg(
+                  {
+                    delay,
+                    property: ['fillOpacity'],
+                    start: {
+                      fillOpacity: 0,
+                    },
+                    end: {
+                      fillOpacity: 1,
+                    },
+                  },
+                  item
+                );
+              },
+            }}
           />
         );
       })}

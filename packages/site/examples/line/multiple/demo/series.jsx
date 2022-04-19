@@ -8,8 +8,7 @@ fetch('https://gw.alipayobjects.com/os/antfincdn/OVMtvjbnut/series-line.json')
   .then((data) => {
     const delay = processUserOpt(data, {
       xField: 'date',
-      fields: ['type'],
-      units: [600],
+      fields: [{ field: 'type', unit: 1000 }],
     });
     const duration = 2000;
 
