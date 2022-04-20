@@ -1,4 +1,5 @@
 import { deepMix, isArray, isFunction } from '@antv/util';
+import { deepClone } from '../../util/obj';
 import { jsx } from '../../jsx';
 import { LineViewProps } from './types';
 
@@ -75,6 +76,7 @@ export default (props: LineViewProps) => {
 
   const appear = {
     easing: 'linear',
+    delay: 0,
     duration: 450,
     clip: {
       type: 'rect',
@@ -92,13 +94,27 @@ export default (props: LineViewProps) => {
       },
     },
   };
+  const update = {
+    easing: 'linear',
+    duration: 450,
+    property: ['points'],
+  };
+  const defaultAnimation = {
+    appear,
+    update,
+  };
+
   return (
     <group>
       {records.map((record) => {
         const { key, children } = record;
 
-        //#region 处理接收的animation
-        let _thisAnimation = {};
+        //#region 差异化配置处理
+        // 复刻一份 defaultAnimation 作为该多段线的默认动画
+        const thisDefaultAnimation = deepClone(defaultAnimation);
+
+        // 解析动画配置，获得改该多段线的差异化动画配置
+        let thisAnimation = {};
         if (animation) {
           Object.keys(animation).map((animationType) => {
             let _animationCfg = animation[animationType];
@@ -106,10 +122,12 @@ export default (props: LineViewProps) => {
             if (isFunction(_animationCfg)) {
               _animationCfg = _animationCfg(key);
             }
-            _thisAnimation[animationType] = _animationCfg;
+            thisAnimation[animationType] = _animationCfg;
           });
         }
-        console.log(_thisAnimation);
+
+        // 用差异化配置更新默认动画配置
+        const finalAnimation = deepMix(thisDefaultAnimation, thisAnimation);
         //#endregion
 
         return (
@@ -126,40 +144,16 @@ export default (props: LineViewProps) => {
                     ...shape,
                     lineWidth: size || shape.lineWidth,
                   }}
-                  animation={deepMix(
-                    {
-                      appear: {
-                        easing: 'linear',
-                        duration: 450,
-                        clip: {
-                          type: 'rect',
-                          property: ['width'],
-                          attrs: {
-                            x: left,
-                            y: top,
-                            height: height,
-                          },
-                          start: {
-                            width: 0,
-                          },
-                          end: {
-                            width: width,
-                          },
-                        },
-                      },
-                      update: {
-                        easing: 'linear',
-                        duration: 450,
-                        property: ['points'],
-                      },
-                    },
-                    _thisAnimation
-                  )}
+                  animation={finalAnimation}
                 />
               );
             })}
             {EndView ? (
-              <AnimationEndView record={record} EndView={EndView} appear={appear} />
+              <AnimationEndView
+                record={record}
+                EndView={EndView}
+                appear={finalAnimation['appear']}
+              />
             ) : null}
           </group>
         );
