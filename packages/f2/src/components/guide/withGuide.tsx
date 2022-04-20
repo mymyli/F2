@@ -110,6 +110,22 @@ export default (View) => {
       return theme.guide;
     }
 
+    processOpt(animation, origin) {
+      let thisAnimation = {};
+
+      if (animation) {
+        Object.keys(animation).map((animationType) => {
+          let _animationCfg = animation[animationType];
+          // 如果动画配置为函数，则执行该函数获取配置对象
+          if (isFunction(_animationCfg)) {
+            _animationCfg = _animationCfg(origin);
+          }
+          thisAnimation[animationType] = _animationCfg;
+        });
+      }
+      return thisAnimation;
+    }
+
     render() {
       const { props, context } = this;
       const { coord, records = [], animation, chart } = props;
@@ -118,11 +134,15 @@ export default (View) => {
       const theme = this.getGuideTheme();
       const { guideWidth, guideHeight, guideBBox } = this.state;
 
-      let animationCfg = animation;
-      if (isFunction(animation)) {
-        // 透传绘制关键点和chart实例
-        animationCfg = animation(points, chart);
-      }
+      // let animationCfg = animation;
+      // if (isFunction(animation)) {
+      //   // 透传绘制关键点和chart实例
+      //   animationCfg = animation(points, chart);
+      // }
+      //#region time Cfg
+      const origin = records[0];
+      const _animation = this.processOpt(animation, origin);
+      //#endregion
 
       return (
         <View
@@ -136,7 +156,7 @@ export default (View) => {
           guideWidth={guideWidth}
           guideHeight={guideHeight}
           guideBBox={guideBBox}
-          animation={animationCfg}
+          animation={_animation}
         />
       );
     }

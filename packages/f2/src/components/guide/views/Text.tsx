@@ -9,6 +9,7 @@ type TextGuideProps = {
   offsetX?: number;
   offsetY?: number;
   theme?: any;
+  records: any;
 };
 
 export default (props: TextGuideProps, context) => {
@@ -20,6 +21,23 @@ export default (props: TextGuideProps, context) => {
   const offsetYNum = context.px2hd(offsetY);
   const posX = x + (offsetXNum || 0);
   const posY = y + (offsetYNum || 0);
+
+  //#region time Cfg
+  let _thisAnimation = {};
+  const { records } = props;
+  const item = records[0];
+
+  if (animation) {
+    Object.keys(animation).map((animationType) => {
+      let _animationCfg = animation[animationType];
+      // 如果动画配置为函数，则执行该函数获取配置对象
+      if (isFunction(_animationCfg)) {
+        _animationCfg = _animationCfg(item);
+      }
+      _thisAnimation[animationType] = _animationCfg;
+    });
+  }
+  //#endregion
 
   return (
     <text
@@ -37,7 +55,7 @@ export default (props: TextGuideProps, context) => {
             property: ['x', 'y'],
           },
         },
-        animation
+        _thisAnimation
       )}
     />
   );
