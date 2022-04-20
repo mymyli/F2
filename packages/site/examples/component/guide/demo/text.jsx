@@ -1,5 +1,6 @@
 /** @jsx jsx */
-import { jsx, Canvas, Chart, Interval, TextGuide } from '@antv/f2';
+import { jsx, Canvas, Timeline, Chart, Interval, TextGuide } from '@antv/f2';
+import { processUserOpt, processAnimationTypeCfg } from '@antv/f2';
 
 const context = document.getElementById('container').getContext('2d');
 
@@ -11,59 +12,70 @@ const data = [
   { genre: 'Other', sold: 150, type: 'a' },
 ];
 
-const delay = processUserOpt(data, {
+const delay_interval = processUserOpt(data, {
   xField: 'genre',
-  fields: [{ field: 'genre', unit: 500 }],
+  fields: [{ field: 'sold', unit: 500 }],
 });
+const cfg_interval = {
+  delay: delay_interval,
+  easing: 'bounceOut',
+};
+
+const delay_guide = processUserOpt(data, {
+  xField: 'genre',
+  fields: [{ field: 'sold', unit: 500, base: 450 }],
+});
+const cfg_guide = {
+  delay: delay_guide,
+  duration: 200,
+  property: ['fillOpacity'],
+  start: {
+    fillOpacity: 0,
+  },
+  end: {
+    fillOpacity: 1,
+  },
+};
 
 const { props } = (
   <Canvas context={context} pixelRatio={window.devicePixelRatio}>
-    <Chart data={data}>
-      <Interval
-        x="genre"
-        y="sold"
-        animation={{
-          appear: (item) => {
-            return processAnimationTypeCfg({ delay }, item);
-          },
-        }}
-      />
-      {data.map((item) => {
-        const { sold } = item;
-        return (
-          <TextGuide
-            records={[item]}
-            onClick={(ev) => {
-              console.log('ev: ', ev.points);
-            }}
-            content={`${sold}`}
-            attrs={{
-              fill: '#000',
-              fontSize: '24px',
-            }}
-            offsetY={-20}
-            offsetX={-15}
-            animation={{
-              update: (item) => {
-                return processAnimationTypeCfg(
-                  {
-                    delay,
-                    property: ['fillOpacity'],
-                    start: {
-                      fillOpacity: 0,
-                    },
-                    end: {
-                      fillOpacity: 1,
-                    },
-                  },
-                  item
-                );
-              },
-            }}
-          />
-        );
-      })}
-    </Chart>
+    <Timeline>
+      <Chart data={data}>
+        <Interval
+          x="genre"
+          y="sold"
+          color="genre"
+          animation={{
+            appear: (item) => {
+              return processAnimationTypeCfg({ ...cfg_interval }, item);
+            },
+          }}
+        />
+        {data.map((item) => {
+          const { sold } = item;
+          return (
+            <TextGuide
+              records={[item]}
+              onClick={(ev) => {
+                console.log('ev: ', ev.points);
+              }}
+              content={`${sold}`}
+              attrs={{
+                fill: '#000',
+                fontSize: '24px',
+              }}
+              offsetY={-10}
+              offsetX={-10}
+              animation={{
+                update: (item) => {
+                  return processAnimationTypeCfg({ ...cfg_guide }, item);
+                },
+              }}
+            />
+          );
+        })}
+      </Chart>
+    </Timeline>
   </Canvas>
 );
 

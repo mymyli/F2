@@ -44,6 +44,12 @@ const delay = processUserOpt(data, {
   xField: 'year',
   fields: [{ field: 'year', start: '1956 年', unit: 500 }],
 });
+// 与普通动画配置方式一致
+const cfg = {
+  delay,
+  duration,
+  easing: 'bounceOut',
+};
 
 const context = document.getElementById('container').getContext('2d');
 const { props } = (
@@ -64,8 +70,7 @@ const { props } = (
         animation={{
           // item为固定参数，无需手动配置
           appear: (item) => {
-            // 将处理过的配置以对象形式传入，与普通动画配置方式类似
-            return processAnimationTypeCfg({ delay, duration, easing: 'elasticOut' }, item);
+            return processAnimationTypeCfg({ ...cfg }, item);
           },
           update: {},
         }}

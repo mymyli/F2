@@ -92,6 +92,11 @@ const delay = processUserOpt(data, {
     { field: 'name', start: 'Berlin', unit: 500 },
   ],
 });
+const cfg = {
+  delay,
+  duration: 1000,
+  easing: 'bounceOut',
+};
 
 const context = document.getElementById('container').getContext('2d');
 const { props } = (
@@ -109,7 +114,7 @@ const { props } = (
         }}
         animation={{
           appear: (item) => {
-            return processAnimationTypeCfg({ delay }, item);
+            return processAnimationTypeCfg({ ...cfg }, item);
           },
         }}
       />

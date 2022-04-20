@@ -1,22 +1,15 @@
-import { valuesOfKey, sortBy, isArray, pick } from '@antv/util';
+import { valuesOfKey, sortBy, isArray, pick, deepMix } from '@antv/util';
 
 //#region types
-type UserOpt = {
-  xField: string;
-  fields?: string[];
-  units?: number[];
-  starts?: any[];
-  //   [k: string]: any;
+type fieldOpt = {
+  field: string;
+  start?: any;
+  base?: number;
+  unit?: number;
 };
-
-type fieldCfg = {
-  field: string | number;
-  start: any;
-  unit: number;
-};
-type fieldsCfg = {
+type fieldsOpt = {
   xField: any;
-  fields: fieldCfg[];
+  fields: fieldOpt[];
 };
 
 type TimeCfg = {
@@ -26,6 +19,7 @@ type TimeCfg = {
 type TimeCfgArray = TimeCfg[];
 //#endregion
 
+//#region 解析用户配置
 function getFieldValues(data: any[], field: string) {
   return valuesOfKey(data, field);
 }
@@ -44,17 +38,29 @@ function pickAttrs(element, attrNames: string[]) {
 
 // TODO 后续实现不同的插值计算方法
 function interpolateTimes() {}
-function getTimesByField(data: any[], field: string, isX: boolean, unit?: number, start?: any) {
+function getTimesByField(
+  data: any[],
+  field: string,
+  isX: boolean,
+  start?: any,
+  base?: number,
+  unit?: number
+) {
   let times = {};
-  let _unit = 250;
+
+  let _unit = 0; // 默认间隔
   if (unit) _unit = unit;
+  let _base = 0; // 默认起始
+  if (base) _base = base;
+
   let fieldValues = [];
   let startIndex = 0;
 
   if (isX) {
     fieldValues = getFieldValues(data, field);
   } else {
-    const sortedData = sortBy(data, field);
+    let _data = deepMix([], data); // 直接sortBy会改变原数据，导致图形位置变化
+    const sortedData = sortBy(_data, field);
     fieldValues = getFieldValues(sortedData, field);
   }
 
@@ -67,24 +73,25 @@ function getTimesByField(data: any[], field: string, isX: boolean, unit?: number
 
   for (let i = 0, len = fieldValues.length; i < len; i++) {
     const value = fieldValues[i];
-    times[value] = Math.abs((i - startIndex) * unit);
+    times[value] = Math.abs((i - startIndex) * unit) + _base;
   }
   return times;
 }
 
-function getTimes(data: any[], xField, field, start?, unit?) {
+function getTimes(data: any[], xField, fieldOpt: fieldOpt) {
   let isX = false;
+  const { field, start, base, unit } = fieldOpt;
   isX = field === xField;
-  return getTimesByField(data, field, isX, unit, start);
+  return getTimesByField(data, field, isX, start, base, unit);
 }
 
 // userOpt = {xField:"", fields:[{},{}]}
-function getCfgArray(data, xField, fields): TimeCfgArray {
+function getCfgArray(data, xField, fields: fieldOpt[]): TimeCfgArray {
   let cfgArray = [];
   for (let i = 0, len = fields.length; i < len; i++) {
     const f = fields[i];
-    const { field, start, unit } = f;
-    const times = getTimes(data, xField, field, start, unit);
+    const { field } = f;
+    const times = getTimes(data, xField, f);
     cfgArray.push({
       field,
       times,
@@ -98,7 +105,7 @@ function getCfgArray(data, xField, fields): TimeCfgArray {
  * @param data 原始数据集
  * @param userOpt 用户设置
  */
-export function processUserOpt(data: any[], userOpt: number | fieldsCfg): number | TimeCfgArray {
+export function processUserOpt(data: any[], userOpt: number | fieldsOpt): number | TimeCfgArray {
   if (!data || !data.length) {
     throw new Error('"data" required when process user option');
   }
@@ -109,16 +116,14 @@ export function processUserOpt(data: any[], userOpt: number | fieldsCfg): number
 
   const { xField, fields } = userOpt;
   if (!xField) throw new Error('"xField" required by time configuration but get null');
-
-  let _fields = [{ field: xField, start: null, unit: 0 }];
+  if (!fields) throw new Error('"fields" required by time configuration but get null');
   if (fields && !isArray(fields)) throw new Error('"fields" must be Array');
-  if (fields && fields.length) {
-    _fields = fields;
-  }
 
-  return getCfgArray(data, xField, _fields);
+  return getCfgArray(data, xField, fields);
 }
+//#endregion
 
+//#region 读取配置
 function parseCfg(cfgs, item) {
   if (typeof cfgs === 'number') {
     return cfgs;
@@ -171,3 +176,4 @@ export function processAnimationTypeCfg(animationCfg, item) {
   }
   return typeCfg;
 }
+//#endregion

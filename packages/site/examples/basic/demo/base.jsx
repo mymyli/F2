@@ -1,5 +1,6 @@
 /** @jsx jsx */
 import { jsx, Canvas, Chart, Interval, Axis, Tooltip, Legend } from '@antv/f2';
+import { processUserOpt, processAnimationTypeCfg } from '@antv/f2';
 
 const context = document.getElementById('container').getContext('2d');
 
@@ -12,6 +13,16 @@ const data = [
   { genre: 'Other', sold: 150 },
 ];
 
+const delay = processUserOpt(data, {
+  xField: 'genre',
+  fields: [{ field: 'genre', start: 'Strategy', unit: 200 }],
+});
+const cfg = {
+  delay,
+  duration: 1000,
+  easing: 'elasticOut',
+};
+
 const { props } = (
   <Canvas context={context} pixelRatio={window.devicePixelRatio}>
     <Chart data={data}>
@@ -19,7 +30,16 @@ const { props } = (
       <Axis field="genre" />
       <Axis field="sold" />
       <Tooltip showTooltipMarker={true} />
-      <Interval x="genre" y="sold" color="genre" />
+      <Interval
+        x="genre"
+        y="sold"
+        color="genre"
+        animation={{
+          appear: (item) => {
+            return processAnimationTypeCfg({ ...cfg }, item);
+          },
+        }}
+      />
     </Chart>
   </Canvas>
 );

@@ -10,7 +10,10 @@ fetch('https://gw.alipayobjects.com/os/antfincdn/OVMtvjbnut/series-line.json')
       xField: 'date',
       fields: [{ field: 'type', unit: 1000 }],
     });
-    const duration = 2000;
+    const cfg = {
+      delay,
+      duration: 2000,
+    };
 
     const context = document.getElementById('container').getContext('2d');
     const { props } = (
@@ -31,7 +34,7 @@ fetch('https://gw.alipayobjects.com/os/antfincdn/OVMtvjbnut/series-line.json')
             color="type"
             animation={{
               appear: (item) => {
-                return processAnimationTypeCfg({ delay, duration }, item);
+                return processAnimationTypeCfg({ ...cfg }, item);
               },
             }}
           />
