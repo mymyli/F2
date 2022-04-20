@@ -43,6 +43,11 @@ class Animator {
         // @ts-ignore
         return name.interpolate(start, end);
       }
+      if (Array.isArray(name)) {
+        if (name[2]) throw new Error('wrong property');
+        const attrName = name[0];
+        return interpolate(start[attrName], end[attrName]);
+      }
     });
 
     this.easing = typeof easing === 'function' ? easing : Easing[easing] || Easing.linear;
@@ -87,6 +92,10 @@ class Animator {
       const name = property[i];
       if (isString(name)) {
         attrs[name] = interpolates[i](t);
+      } else if (Array.isArray(name)) {
+        const attrName = name[0] as string;
+        const digit = name[1];
+        attrs[attrName] = interpolates[i](t).toFixed(digit);
       } else {
         // @ts-ignore
         attrs[name.name] = interpolates[i](t);

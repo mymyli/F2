@@ -12,30 +12,16 @@ const data = [
   { genre: 'Other', sold: 150, type: 'a' },
 ];
 
+const duration = 1000;
 const delay_interval = processUserOpt(data, {
   xField: 'genre',
   fields: [{ field: 'sold', unit: 500 }],
 });
-const cfg_interval = {
-  delay: delay_interval,
-  easing: 'bounceOut',
-};
 
 const delay_guide = processUserOpt(data, {
   xField: 'genre',
-  fields: [{ field: 'sold', unit: 500, base: 450 }],
+  fields: [{ field: 'sold', unit: 500, base: 0 }],
 });
-const cfg_guide = {
-  delay: delay_guide,
-  duration: 200,
-  property: ['fillOpacity'],
-  start: {
-    fillOpacity: 0,
-  },
-  end: {
-    fillOpacity: 1,
-  },
-};
 
 const { props } = (
   <Canvas context={context} pixelRatio={window.devicePixelRatio}>
@@ -47,7 +33,14 @@ const { props } = (
           color="genre"
           animation={{
             appear: (item) => {
-              return processAnimationTypeCfg({ ...cfg_interval }, item);
+              return processAnimationTypeCfg(
+                {
+                  delay: delay_interval,
+                  duration,
+                  easing: 'linear',
+                },
+                item
+              );
             },
           }}
         />
@@ -68,7 +61,23 @@ const { props } = (
               offsetX={-10}
               animation={{
                 update: (item) => {
-                  return processAnimationTypeCfg({ ...cfg_guide }, item);
+                  return processAnimationTypeCfg(
+                    {
+                      delay: delay_guide,
+                      duration,
+                      property: ['fillOpacity', ['text', 0], 'y'],
+                      start: {
+                        fillOpacity: 0,
+                        text: 0,
+                        y: 255,
+                      },
+                      end: {
+                        fillOpacity: 1,
+                        text: sold,
+                      },
+                    },
+                    item
+                  );
                 },
               }}
             />
