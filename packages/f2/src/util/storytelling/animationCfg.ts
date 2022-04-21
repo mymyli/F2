@@ -79,6 +79,7 @@ function getCfgArray(data, xField, fields: FieldsOpt): TimeCfgArray {
 /**
  * 根据原始数据集和用户time设置计算得到times配置
  * @param data 原始数据集
+ * @param xField 作为x轴的字段
  * @param userOpt 用户设置
  */
 export function processOpt(data: any[], xField, cycleOpt: CycleOpt) {
@@ -91,7 +92,6 @@ export function processOpt(data: any[], xField, cycleOpt: CycleOpt) {
   const _cycleOpt = deepClone(cycleOpt);
   Object.keys(_cycleOpt).map((step) => {
     const stepOpt = _cycleOpt[step]; // StepOpt
-
     if (Array.isArray(stepOpt)) {
       _cycleOpt[step] = getCfgArray(data, xField, stepOpt);
     } else if (typeof stepOpt === 'string' || 'number') {
@@ -132,7 +132,7 @@ function parseCfg(cfgs, item) {
 /**
  * 根据times配置，在动画执行前获取图形元素各自的动画配置
  * @param animationCfg times配置
- * @param item 固定参数，无需手动传入
+ * @param item 图形元素对应的数据
  * @returns
  */
 export function getAnimationCfg(animationCfg, item) {

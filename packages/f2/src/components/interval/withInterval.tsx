@@ -96,9 +96,9 @@ export default (Views) => {
 
       const thisAnimation = deepClone(animation);
       Object.keys(animation).map((cycle) => {
-        const typeCfg = thisAnimation[cycle];
-        if (isFunction(typeCfg)) {
-          const f_processOpt = typeCfg();
+        const cycleOpt = thisAnimation[cycle];
+        if (isFunction(cycleOpt)) {
+          const f_processOpt = cycleOpt();
           thisAnimation[cycle] = f_processOpt(originData, xField as string);
         }
       });

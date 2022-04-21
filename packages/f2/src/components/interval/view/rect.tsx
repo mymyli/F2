@@ -20,7 +20,6 @@ export default (props) => {
                 thisAnimation = deepClone(animation);
                 Object.keys(animation).map((cycle) => {
                   let cycleCfg = thisAnimation[cycle];
-                  console.log(cycleCfg);
                   thisAnimation[cycle] = getAnimationCfg(cycleCfg, item);
                 });
               }
