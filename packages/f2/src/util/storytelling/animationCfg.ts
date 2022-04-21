@@ -1,4 +1,4 @@
-import { valuesOfKey, sortBy, isArray, pick, deepMix, isFunction } from '@antv/util';
+import { isArray, isFunction } from '@antv/util';
 import timeFunctions from './timeFunctions';
 import { deepClone } from './util';
 
@@ -32,33 +32,20 @@ export function registerTimeFunc(key: string, f: Function) {
 //#endregion
 
 //#region 解析用户配置
-function getFieldValues(data: any[], field: string) {
-  return valuesOfKey(data, field);
-}
-
-function pickAttrs(element, attrNames: string[]) {
-  if (!isArray(element)) {
-    return pick(element, attrNames);
-  }
-
-  let origin = [];
-  element.forEach((e, i) => {
-    origin.push(pick(e, attrNames));
-  });
-  return origin;
-}
-
 function getTimes(data: any[], xField, fieldOpt: FieldOpt) {
   const { field, start, base, unit, f } = fieldOpt;
 
   let isX = false;
   isX = field === xField;
 
-  let defaultF = 'order';
-  if (!f) return timeFunctions[defaultF](data, field, isX, start, base, unit);
-  // @ts-ignore
-  if (typeof f === 'string') return timeFunctions[f](data, field, isX, start, base, unit);
-  if (isFunction(f)) return f(data, field, isX, start, base, unit);
+  let F: Function = timeFunctions['order'];
+  if (typeof f === 'string') {
+    F = timeFunctions[f];
+  } else if (isFunction(f)) {
+    F = f;
+  }
+
+  return F(data, field, isX, start, base, unit);
 }
 
 // userOpt = {xField:"", fields:[{field:"",start:,unit:,base:,f:},{}]}
@@ -92,7 +79,7 @@ export function processOpt(data: any[], xField, cycleOpt: CycleOpt) {
   const _cycleOpt = deepClone(cycleOpt);
   Object.keys(_cycleOpt).map((step) => {
     const stepOpt = _cycleOpt[step]; // StepOpt
-    if (Array.isArray(stepOpt)) {
+    if (isArray(stepOpt)) {
       _cycleOpt[step] = getCfgArray(data, xField, stepOpt);
     } else if (typeof stepOpt === 'string' || 'number') {
     } else {

@@ -6,6 +6,7 @@ import { GeomType, GeometryProps } from './interface';
 import AttrController from '../../controller/attr';
 import equal from '../../base/equal';
 import { AnimationCycle } from '../../canvas/animation/interface';
+import { deepClone } from '../../util/storytelling/util';
 
 // 保留原始数据的字段
 const FIELD_ORIGIN = 'origin';
@@ -569,6 +570,26 @@ class Geometry<
       };
     });
     return items;
+  }
+
+  // 处理动画的差异化时间配置
+  processUserOpt(animation) {
+    if (!animation) {
+      return;
+    }
+
+    const { field: xField } = this.attrs.x.scale;
+    const { data: originData } = this.props; // 只在Chart体系中才能这样获取原始数据
+
+    const thisAnimation = deepClone(animation);
+    Object.keys(animation).map((cycle) => {
+      const cycleOpt = thisAnimation[cycle];
+      if (isFunction(cycleOpt)) {
+        const f_processOpt = cycleOpt();
+        thisAnimation[cycle] = f_processOpt(originData, xField as string);
+      }
+    });
+    return thisAnimation;
   }
 }
 

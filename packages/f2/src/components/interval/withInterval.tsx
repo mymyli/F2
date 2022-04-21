@@ -3,7 +3,6 @@ import { mix, isNil, deepMix, isFunction } from '@antv/util';
 import Geometry from '../geometry';
 import * as LabelViews from './label';
 import _ from 'lodash';
-import { deepClone } from '../../util/storytelling/util';
 
 export default (Views) => {
   return class Interval extends Geometry {
@@ -84,25 +83,6 @@ export default (Views) => {
         }
       }
       return records;
-    }
-
-    processUserOpt(animation) {
-      if (!animation) {
-        return;
-      }
-
-      const { field: xField } = this.attrs.x.scale;
-      const { data: originData } = this.props;
-
-      const thisAnimation = deepClone(animation);
-      Object.keys(animation).map((cycle) => {
-        const cycleOpt = thisAnimation[cycle];
-        if (isFunction(cycleOpt)) {
-          const f_processOpt = cycleOpt();
-          thisAnimation[cycle] = f_processOpt(originData, xField as string);
-        }
-      });
-      return thisAnimation;
     }
 
     render() {

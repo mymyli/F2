@@ -1,4 +1,4 @@
-import { valuesOfKey, deepMix, sortBy } from '@antv/util';
+import { valuesOfKey, deepMix, sortBy, pick } from '@antv/util';
 import { deepClone } from './util';
 
 //#region util
@@ -7,6 +7,18 @@ const defaultBase = 0;
 
 function getFieldValues(data: any[], field: string) {
   return valuesOfKey(data, field);
+}
+
+function pickAttrs(element, attrNames: string[]) {
+  if (!Array.isArray(element)) {
+    return pick(element, attrNames);
+  }
+
+  let origin = [];
+  element.forEach((e, i) => {
+    origin.push(pick(e, attrNames));
+  });
+  return origin;
 }
 
 function init(unit, base) {
