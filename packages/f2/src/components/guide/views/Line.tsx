@@ -25,6 +25,23 @@ export default (props: LineGuideProps, context) => {
   const posX2 = x2 + (isArray(offsetXNum) ? offsetXNum[1] || 0 : offsetXNum || 0);
   const posY2 = y2 + (isArray(offsetYNum) ? offsetYNum[1] || 0 : offsetYNum || 0);
 
+  const update = {
+    easing: 'linear',
+    delay: 0,
+    duration: 450,
+    property: ['x2'],
+    start: {
+      x2: posX1,
+    },
+    end: {
+      x2: posX2,
+    },
+  };
+  const defaultAnimation = {
+    update,
+  };
+  const finalAnimation = deepMix(defaultAnimation, animation);
+
   return (
     <group>
       <line
@@ -35,7 +52,7 @@ export default (props: LineGuideProps, context) => {
           y2: posY2,
           ...style,
         }}
-        animation={animation}
+        animation={finalAnimation}
       />
     </group>
   );

@@ -21,6 +21,11 @@ const { props } = (
           { genre: 'max', sold: '50%' },
         ]}
         style={{ stroke: 'red' }}
+        animation={{
+          update: {
+            duration: 1000,
+          },
+        }}
       />
     </Chart>
   </Canvas>
