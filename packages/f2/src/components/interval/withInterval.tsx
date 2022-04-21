@@ -1,7 +1,9 @@
 import { jsx } from '../../jsx';
-import { mix, isNil, deepMix } from '@antv/util';
+import { mix, isNil, deepMix, isFunction } from '@antv/util';
 import Geometry from '../geometry';
 import * as LabelViews from './label';
+import _ from 'lodash';
+import { deepClone } from '../../util/storytelling/util';
 
 export default (Views) => {
   return class Interval extends Geometry {
@@ -84,9 +86,28 @@ export default (Views) => {
       return records;
     }
 
+    processUserOpt(animation) {
+      if (!animation) {
+        return;
+      }
+
+      const { field: xField } = this.attrs.x.scale;
+      const { data: originData } = this.props;
+
+      const thisAnimation = deepClone(animation);
+      Object.keys(animation).map((cycle) => {
+        const typeCfg = thisAnimation[cycle];
+        if (isFunction(typeCfg)) {
+          const f_processOpt = typeCfg();
+          thisAnimation[cycle] = f_processOpt(originData, xField as string);
+        }
+      });
+      return thisAnimation;
+    }
+
     render() {
       const { props, state } = this;
-      const { coord, shape = 'rect', animation, showLabel, labelCfg: customLabelCfg } = props;
+      const { coord, shape = 'rect', showLabel, labelCfg: customLabelCfg, animation } = props;
       const View = Views[shape];
       const LabelView = LabelViews[shape];
       const labelCfg = deepMix(
@@ -97,18 +118,19 @@ export default (Views) => {
         },
         customLabelCfg
       );
-
       if (!View) return null;
       const { selected } = state;
-
       const records = this.mapping();
+
+      const thisAnimation = this.processUserOpt(animation);
+
       return (
         <View
           coord={coord}
           records={records}
           selected={selected}
           shape={shape}
-          animation={animation}
+          animation={thisAnimation}
           showLabel={showLabel}
           labelCfg={labelCfg}
           LabelView={LabelView}

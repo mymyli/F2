@@ -1,5 +1,7 @@
 import { deepMix, isFunction } from '@antv/util';
 import { jsx } from '../../../jsx';
+import { deepClone } from '../../../util/storytelling/util';
+import { getAnimationCfg } from '../../../util/storytelling/animationCfg';
 
 export default (props) => {
   const { records, animation } = props;
@@ -13,15 +15,13 @@ export default (props) => {
               const { key, xMin, xMax, yMin, yMax, color, shape } = item;
 
               //#region 处理接收的animation
-              let _thisAnimation = {};
+              let thisAnimation = {};
               if (animation) {
-                Object.keys(animation).map((animationType) => {
-                  let _animationCfg = animation[animationType];
-                  // 如果动画配置为函数，则执行该函数获取配置对象
-                  if (isFunction(_animationCfg)) {
-                    _animationCfg = _animationCfg(item);
-                  }
-                  _thisAnimation[animationType] = _animationCfg;
+                thisAnimation = deepClone(animation);
+                Object.keys(animation).map((cycle) => {
+                  let cycleCfg = thisAnimation[cycle];
+                  console.log(cycleCfg);
+                  thisAnimation[cycle] = getAnimationCfg(cycleCfg, item);
                 });
               }
               //#endregion
@@ -54,7 +54,7 @@ export default (props) => {
                         property: ['x', 'y', 'width', 'height'],
                       },
                     },
-                    _thisAnimation
+                    thisAnimation
                   )}
                 />
               );

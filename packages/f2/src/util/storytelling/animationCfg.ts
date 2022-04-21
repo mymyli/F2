@@ -1,15 +1,18 @@
-import { valuesOfKey, sortBy, isArray, pick, deepMix } from '@antv/util';
+import { valuesOfKey, sortBy, isArray, pick, deepMix, isFunction } from '@antv/util';
+import timeFunctions from './timeFunctions';
+import { deepClone } from './util';
 
 //#region types
-type fieldOpt = {
+type FieldOpt = {
   field: string;
   start?: any;
   base?: number;
   unit?: number;
+  f?: Function;
 };
-type fieldsOpt = {
-  xField: any;
-  fields: fieldOpt[];
+type FieldsOpt = FieldOpt[];
+type CycleOpt = {
+  [k: string]: any;
 };
 
 type TimeCfg = {
@@ -17,6 +20,15 @@ type TimeCfg = {
   times: { [k: string]: number };
 };
 type TimeCfgArray = TimeCfg[];
+//#endregion
+
+//#region util
+export function registerTimeFunc(key: string, f: Function) {
+  if (timeFunctions[key]) {
+    throw new Error(`${key} already exists, try another name`);
+  }
+  timeFunctions[key] = f;
+}
 //#endregion
 
 //#region 解析用户配置
@@ -36,62 +48,26 @@ function pickAttrs(element, attrNames: string[]) {
   return origin;
 }
 
-// TODO 后续实现不同的插值计算方法
-function interpolateTimes() {}
-function getTimesByField(
-  data: any[],
-  field: string,
-  isX: boolean,
-  start?: any,
-  base?: number,
-  unit?: number
-) {
-  let times = {};
+function getTimes(data: any[], xField, fieldOpt: FieldOpt) {
+  const { field, start, base, unit, f } = fieldOpt;
 
-  let _unit = 0; // 默认间隔
-  if (unit) _unit = unit;
-  let _base = 0; // 默认起始
-  if (base) _base = base;
-
-  let fieldValues = [];
-  let startIndex = 0;
-
-  if (isX) {
-    fieldValues = getFieldValues(data, field);
-  } else {
-    let _data = deepMix([], data); // 直接sortBy会改变原数据，导致图形位置变化
-    const sortedData = sortBy(_data, field);
-    fieldValues = getFieldValues(sortedData, field);
-  }
-
-  if (start) {
-    startIndex = fieldValues.indexOf(start);
-    if (startIndex < 0) {
-      throw new Error('"start" value not found');
-    }
-  }
-
-  for (let i = 0, len = fieldValues.length; i < len; i++) {
-    const value = fieldValues[i];
-    times[value] = Math.abs((i - startIndex) * unit) + _base;
-  }
-  return times;
-}
-
-function getTimes(data: any[], xField, fieldOpt: fieldOpt) {
   let isX = false;
-  const { field, start, base, unit } = fieldOpt;
   isX = field === xField;
-  return getTimesByField(data, field, isX, start, base, unit);
+
+  let defaultF = 'order';
+  if (!f) return timeFunctions[defaultF](data, field, isX, start, base, unit);
+  // @ts-ignore
+  if (typeof f === 'string') return timeFunctions[f](data, field, isX, start, base, unit);
+  if (isFunction(f)) return f(data, field, isX, start, base, unit);
 }
 
-// userOpt = {xField:"", fields:[{},{}]}
-function getCfgArray(data, xField, fields: fieldOpt[]): TimeCfgArray {
+// userOpt = {xField:"", fields:[{field:"",start:,unit:,base:,f:},{}]}
+function getCfgArray(data, xField, fields: FieldsOpt): TimeCfgArray {
   let cfgArray = [];
   for (let i = 0, len = fields.length; i < len; i++) {
-    const f = fields[i];
-    const { field } = f;
-    const times = getTimes(data, xField, f);
+    const fieldOpt = fields[i];
+    const { field } = fieldOpt;
+    const times = getTimes(data, xField, fieldOpt);
     cfgArray.push({
       field,
       times,
@@ -105,21 +81,26 @@ function getCfgArray(data, xField, fields: fieldOpt[]): TimeCfgArray {
  * @param data 原始数据集
  * @param userOpt 用户设置
  */
-export function processOpt(data: any[], userOpt: number | fieldsOpt): number | TimeCfgArray {
+export function processOpt(data: any[], xField, cycleOpt: CycleOpt) {
   if (!data || !data.length) {
     throw new Error('"data" required when process user option');
   }
 
-  if (typeof userOpt === 'number') {
-    return userOpt;
-  }
-
-  const { xField, fields } = userOpt;
   if (!xField) throw new Error('"xField" required by time configuration but get null');
-  if (!fields) throw new Error('"fields" required by time configuration but get null');
-  if (fields && !isArray(fields)) throw new Error('"fields" must be Array');
 
-  return getCfgArray(data, xField, fields);
+  const _cycleOpt = deepClone(cycleOpt);
+  Object.keys(_cycleOpt).map((step) => {
+    const stepOpt = _cycleOpt[step]; // StepOpt
+
+    if (Array.isArray(stepOpt)) {
+      _cycleOpt[step] = getCfgArray(data, xField, stepOpt);
+    } else if (typeof stepOpt === 'string' || 'number') {
+    } else {
+      throw new Error('Only String/Number/Array supported by time options');
+    }
+  });
+
+  return _cycleOpt;
 }
 //#endregion
 
