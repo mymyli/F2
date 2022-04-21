@@ -1,6 +1,6 @@
 /** @jsx jsx */
 import { jsx, Canvas, Timeline, Chart, Interval, TextGuide } from '@antv/f2';
-import { processUserOpt, processAnimationTypeCfg } from '@antv/f2';
+import { processOpt, getAnimationCfg } from '@antv/f2';
 
 const context = document.getElementById('container').getContext('2d');
 
@@ -12,16 +12,14 @@ const data = [
   { genre: 'Other', sold: 150, type: 'a' },
 ];
 
-const duration = 1000;
-const delay_interval = processUserOpt(data, {
+const duration = processOpt(data, {
   xField: 'genre',
-  fields: [{ field: 'sold', unit: 500 }],
+  fields: [{ field: 'sold', unit: 10, f: 'value' }],
 });
 
-const delay_guide = processUserOpt(data, {
-  xField: 'genre',
-  fields: [{ field: 'sold', unit: 500, base: 0 }],
-});
+const { clientHeight } = context.canvas;
+const offset = 20;
+const height = clientHeight - offset; // 文字标注起始位置
 
 const { props } = (
   <Canvas context={context} pixelRatio={window.devicePixelRatio}>
@@ -33,9 +31,8 @@ const { props } = (
           color="genre"
           animation={{
             appear: (item) => {
-              return processAnimationTypeCfg(
+              return getAnimationCfg(
                 {
-                  delay: delay_interval,
                   duration,
                   easing: 'linear',
                 },
@@ -61,15 +58,14 @@ const { props } = (
               offsetX={-10}
               animation={{
                 update: (item) => {
-                  return processAnimationTypeCfg(
+                  return getAnimationCfg(
                     {
-                      delay: delay_guide,
                       duration,
                       property: ['fillOpacity', ['text', 0], 'y'],
                       start: {
                         fillOpacity: 0,
                         text: 0,
-                        y: 255,
+                        y: height,
                       },
                       end: {
                         fillOpacity: 1,

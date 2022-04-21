@@ -1,12 +1,12 @@
 /** @jsx jsx */
 import { jsx, Canvas, Chart, Line, Axis, Legend } from '@antv/f2';
 import _ from 'lodash';
-import { processUserOpt, processAnimationTypeCfg } from '@antv/f2';
+import { processOpt, getAnimationCfg } from '@antv/f2';
 
 fetch('https://gw.alipayobjects.com/os/antfincdn/OVMtvjbnut/series-line.json')
   .then((res) => res.json())
   .then((data) => {
-    const delay = processUserOpt(data, {
+    const delay = processOpt(data, {
       xField: 'date',
       fields: [{ field: 'type', unit: 1000 }],
     });
@@ -34,7 +34,7 @@ fetch('https://gw.alipayobjects.com/os/antfincdn/OVMtvjbnut/series-line.json')
             color="type"
             animation={{
               appear: (item) => {
-                return processAnimationTypeCfg({ ...cfg }, item);
+                return getAnimationCfg({ ...cfg }, item);
               },
             }}
           />

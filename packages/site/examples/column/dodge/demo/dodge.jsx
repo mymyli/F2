@@ -1,6 +1,6 @@
 /** @jsx jsx */
 import { jsx, Canvas, Chart, Interval, Axis } from '@antv/f2';
-import { processUserOpt, processAnimationTypeCfg } from '@antv/f2';
+import { processOpt, getAnimationCfg } from '@antv/f2';
 
 const data = [
   {
@@ -85,7 +85,7 @@ const data = [
   },
 ];
 
-const delay = processUserOpt(data, {
+const delay = processOpt(data, {
   xField: '月份',
   fields: [
     { field: '月份', start: 'Feb.', unit: 2000 },
@@ -114,7 +114,7 @@ const { props } = (
         }}
         animation={{
           appear: (item) => {
-            return processAnimationTypeCfg({ ...cfg }, item);
+            return getAnimationCfg({ ...cfg }, item);
           },
         }}
       />

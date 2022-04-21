@@ -1,6 +1,6 @@
 /** @jsx jsx */
 import { jsx, Canvas, Chart, Interval, Tooltip, Axis } from '@antv/f2';
-import { processUserOpt, processAnimationTypeCfg } from '@antv/f2';
+import { processOpt, getAnimationCfg } from '@antv/f2';
 
 const data = [
   {
@@ -40,7 +40,7 @@ const data = [
 // 普通配置无需处理
 const duration = 1000;
 // 差异化配置需经processUserOpt方法处理
-const delay = processUserOpt(data, {
+const delay = processOpt(data, {
   xField: 'year',
   fields: [{ field: 'year', start: '1956 年', unit: 500 }],
 });
@@ -70,9 +70,8 @@ const { props } = (
         animation={{
           // item为固定参数，无需手动配置
           appear: (item) => {
-            return processAnimationTypeCfg({ ...cfg }, item);
+            return getAnimationCfg({ ...cfg }, item);
           },
-          update: {},
         }}
       />
       <Tooltip />

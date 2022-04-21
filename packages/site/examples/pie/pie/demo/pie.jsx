@@ -1,6 +1,6 @@
 /** @jsx jsx */
 import { jsx, Canvas, Chart, Interval, Legend } from '@antv/f2';
-import { processUserOpt, processAnimationTypeCfg } from '@antv/f2';
+import { processOpt, getAnimationCfg } from '@antv/f2';
 
 const data = [
   {
@@ -35,10 +35,11 @@ const data = [
   },
 ];
 
-const delay = processUserOpt(data, {
+const delay = processOpt(data, {
   xField: 'name',
   fields: [{ field: 'name', unit: 500 }],
 });
+
 const cfg = {
   delay,
   duration: 1000,
@@ -66,7 +67,7 @@ const { props } = (
         }}
         animation={{
           appear: (item) => {
-            return processAnimationTypeCfg({ ...cfg }, item);
+            return getAnimationCfg({ ...cfg }, item);
           },
         }}
       />

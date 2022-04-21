@@ -1,6 +1,6 @@
 /** @jsx jsx */
 import { jsx, Canvas, Chart, Interval, Axis, Tooltip, Legend } from '@antv/f2';
-import { processUserOpt, processAnimationTypeCfg } from '@antv/f2';
+import { processOpt, getAnimationCfg } from '@antv/f2';
 
 const context = document.getElementById('container').getContext('2d');
 
@@ -13,7 +13,7 @@ const data = [
   { genre: 'Other', sold: 150 },
 ];
 
-const delay = processUserOpt(data, {
+const delay = processOpt(data, {
   xField: 'genre',
   fields: [{ field: 'genre', start: 'Strategy', unit: 200 }],
 });
@@ -36,7 +36,7 @@ const { props } = (
         color="genre"
         animation={{
           appear: (item) => {
-            return processAnimationTypeCfg({ ...cfg }, item);
+            return getAnimationCfg({ ...cfg }, item);
           },
         }}
       />
