@@ -44,8 +44,14 @@ class Animator {
         return name.interpolate(start, end);
       }
       if (Array.isArray(name)) {
-        if (name[2]) throw new Error('wrong property');
+        // @ts-ignore
+        if (name.length > 2)
+          throw new Error(
+            'property can only be String(attr name) or Array containing 2 members(attr name and digit)'
+          );
         const attrName = name[0];
+        start[attrName] *= 1;
+        end[attrName] *= 1;
         return interpolate(start[attrName], end[attrName]);
       }
     });
@@ -92,7 +98,9 @@ class Animator {
       const name = property[i];
       if (isString(name)) {
         attrs[name] = interpolates[i](t);
-      } else if (Array.isArray(name)) {
+      }
+      // 指定精确度
+      else if (Array.isArray(name)) {
         const attrName = name[0] as string;
         const digit = name[1];
         attrs[attrName] = interpolates[i](t).toFixed(digit);
