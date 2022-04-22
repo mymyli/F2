@@ -1,7 +1,7 @@
 import { deepMix, isFunction } from '@antv/util';
 import { jsx } from '../../../jsx';
 import { deepClone } from '../../../util/storytelling/util';
-import { getAnimationCfg } from '../../../util/storytelling/animationCfg';
+import { getAnimationCfg, parseAnimationCfg } from '../../../util/storytelling/animationCfg';
 
 export default (props) => {
   const { records, animation } = props;
@@ -16,13 +16,7 @@ export default (props) => {
 
               //#region 处理接收的animation
               let thisAnimation = {};
-              if (animation) {
-                thisAnimation = deepClone(animation);
-                Object.keys(animation).map((cycle) => {
-                  let cycleCfg = thisAnimation[cycle];
-                  thisAnimation[cycle] = getAnimationCfg(cycleCfg, item);
-                });
-              }
+              thisAnimation = parseAnimationCfg(animation, item);
               //#endregion
 
               return (

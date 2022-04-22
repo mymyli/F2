@@ -1,5 +1,6 @@
 import { jsx } from '../../../jsx';
-import { deepMix, isFunction } from '@antv/util';
+import { deepMix } from '@antv/util';
+import { parseAnimationCfg } from '../../../util/storytelling/animationCfg';
 
 export default (props) => {
   const { coord, records, animation } = props;
@@ -14,17 +15,7 @@ export default (props) => {
               const { key, xMin, xMax, yMin, yMax, color, shape } = item;
 
               //#region 处理接收的animation
-              let _thisAnimation = {};
-              if (animation) {
-                Object.keys(animation).map((animationType) => {
-                  let _animationCfg = animation[animationType];
-                  // 如果动画配置为函数，则执行该函数获取配置对象
-                  if (isFunction(_animationCfg)) {
-                    _animationCfg = _animationCfg(item);
-                  }
-                  _thisAnimation[animationType] = _animationCfg;
-                });
-              }
+              const parsedAnimation = parseAnimationCfg(animation, item);
               //#endregion
 
               return (

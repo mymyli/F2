@@ -579,13 +579,13 @@ class Geometry<
     }
 
     const { field: xField } = this.attrs.x.scale;
-    const { data: originData } = this.props; // 只在Chart体系中才能这样获取原始数据
+    const { data: originData } = this.props; // 在Chart体系中生效，data由Chart传来
 
     const thisAnimation = deepClone(animation);
     Object.keys(animation).map((cycle) => {
-      const cycleOpt = thisAnimation[cycle];
-      if (isFunction(cycleOpt)) {
-        const f_processOpt = cycleOpt();
+      const typeCfg = thisAnimation[cycle];
+      if (isFunction(typeCfg)) {
+        const f_processOpt = typeCfg();
         thisAnimation[cycle] = f_processOpt(originData, xField as string);
       }
     });

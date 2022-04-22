@@ -49,6 +49,8 @@ class Component<P = any, S = any> {
   setAnimate(animate: boolean) {
     this.animate = animate;
   }
+
+  processUserOpt(animation) {}
 }
 
 // 标识是否是组件

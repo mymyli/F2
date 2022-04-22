@@ -4,6 +4,7 @@ import { isString, isNil, isFunction } from '@antv/util';
 import { Ref } from '../../types';
 import Chart from '../../chart';
 import { renderShape } from '../../base/diff';
+import { deepClone } from '../../util/storytelling/util';
 
 function isInBBox(bbox, point) {
   const { minX, maxX, minY, maxY } = bbox;
@@ -110,19 +111,24 @@ export default (View) => {
       return theme.guide;
     }
 
-    processOpt(animation, origin) {
-      let thisAnimation = {};
-
-      if (animation) {
-        Object.keys(animation).map((animationType) => {
-          let _animationCfg = animation[animationType];
-          // 如果动画配置为函数，则执行该函数获取配置对象
-          if (isFunction(_animationCfg)) {
-            _animationCfg = _animationCfg(origin);
-          }
-          thisAnimation[animationType] = _animationCfg;
-        });
+    processUserOpt(animation) {
+      if (!animation) {
+        return;
       }
+
+      const { chart } = this.props;
+      const xScale = chart.getXScales()[0];
+      const { field: xField } = xScale;
+      const { data: originData } = this.props; // 在Chart体系中生效，data由Chart传来
+
+      const thisAnimation = deepClone(animation);
+      Object.keys(animation).map((cycle) => {
+        const typeCfg = thisAnimation[cycle];
+        if (isFunction(typeCfg)) {
+          const f_processOpt = typeCfg();
+          thisAnimation[cycle] = f_processOpt(originData, xField as string);
+        }
+      });
       return thisAnimation;
     }
 
@@ -134,14 +140,9 @@ export default (View) => {
       const theme = this.getGuideTheme();
       const { guideWidth, guideHeight, guideBBox } = this.state;
 
-      // let animationCfg = animation;
-      // if (isFunction(animation)) {
-      //   // 透传绘制关键点和chart实例
-      //   animationCfg = animation(points, chart);
-      // }
       //#region time Cfg
       const origin = records[0];
-      const _animation = this.processOpt(animation, origin);
+      const thisAnimation = this.processUserOpt(animation);
       //#endregion
 
       return (
@@ -156,7 +157,7 @@ export default (View) => {
           guideWidth={guideWidth}
           guideHeight={guideHeight}
           guideBBox={guideBBox}
-          animation={_animation}
+          animation={thisAnimation}
         />
       );
     }

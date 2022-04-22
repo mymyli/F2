@@ -1,6 +1,7 @@
 import { jsx } from '../../../jsx';
 import { deepMix, isFunction } from '@antv/util';
 import { Style } from '../../../types';
+import { parseAnimationCfg } from '../../../util/storytelling/animationCfg';
 
 type TextGuideProps = {
   points?: { x: number; y: number }[] | null;
@@ -23,20 +24,11 @@ export default (props: TextGuideProps, context) => {
   const posY = y + (offsetYNum || 0);
 
   //#region time Cfg
-  let _thisAnimation = {};
+  let thisAnimation = {};
   const { records } = props;
   const item = records[0];
 
-  if (animation) {
-    Object.keys(animation).map((animationType) => {
-      let _animationCfg = animation[animationType];
-      // 如果动画配置为函数，则执行该函数获取配置对象
-      if (isFunction(_animationCfg)) {
-        _animationCfg = _animationCfg(item);
-      }
-      _thisAnimation[animationType] = _animationCfg;
-    });
-  }
+  thisAnimation = parseAnimationCfg(animation, item);
   //#endregion
 
   return (

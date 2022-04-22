@@ -1,5 +1,5 @@
 import { deepMix, isArray, isFunction } from '@antv/util';
-import { deepClone } from '../../util/obj';
+import { deepClone } from '../../util/storytelling/util';
 import { jsx } from '../../jsx';
 import { LineViewProps } from './types';
 

@@ -1,49 +1,19 @@
-import { valuesOfKey, deepMix, sortBy, pick } from '@antv/util';
-import { deepClone } from './util';
+import { deepMix, sortBy } from '@antv/util';
+import { init, getFieldValues } from './util';
 
-//#region util
-const defaultUnit = 0;
-const defaultBase = 0;
-
-function getFieldValues(data: any[], field: string) {
-  return valuesOfKey(data, field);
-}
-
-function pickAttrs(element, attrNames: string[]) {
-  if (!Array.isArray(element)) {
-    return pick(element, attrNames);
-  }
-
-  let origin = [];
-  element.forEach((e, i) => {
-    origin.push(pick(e, attrNames));
-  });
-  return origin;
-}
-
-function init(unit, base) {
-  return {
-    times: {},
-    _unit: unit ? unit : defaultUnit,
-    _base: base ? base : defaultBase,
-    fieldValues: [],
-    startIndex: 0,
-  };
-}
-//#endregion
-
-//#region time functions
-/**
- * 对数据在指定字段的值排序，据此顺序决定数据的时间配置，时间配置成等差数列
- * @param data 原数据集
- * @param field 作为排序依据的字段
- * @param isX 排序字段是否为x轴字段
- * @param start 排序起始值
- * @param base 时间起始值
- * @param unit 时间差
- * @returns
+/* 参数标准
+ * data 原数据集
+ * field 作为排序依据的字段
+ * isX 排序字段是否为x轴字段
+ * start 排序起始值
+ * base 时间起始值
+ * unit 时间差
  */
-function getTimesByOrderOfValues(
+
+/**
+ * 将数据根据指定字段的值排序，据此顺序决定数据的时间配置，时间配置成等差数列
+ */
+function getTimesByOrderOfValues_Linear(
   data: any[],
   field: string,
   isX: boolean,
@@ -77,13 +47,6 @@ function getTimesByOrderOfValues(
 
 /**
  * 根据数据在指定字段的值获取时间配置
- * @param data
- * @param field
- * @param isX
- * @param start
- * @param base
- * @param unit
- * @returns
  */
 function getTimesByValues(
   data: any[],
@@ -102,10 +65,9 @@ function getTimesByValues(
   }
   return times;
 }
-//#endregion
 
 const functions = {
-  order: getTimesByOrderOfValues,
+  order: getTimesByOrderOfValues_Linear,
   value: getTimesByValues,
 };
 

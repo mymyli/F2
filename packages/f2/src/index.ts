@@ -13,8 +13,8 @@ import Chart from './chart';
 import { jsx as createElement } from './jsx';
 import { renderShape } from './base/diff';
 
-import { processOpt } from './util/storytelling/animationCfg';
-export { processOpt };
+import { processOpt, default as processCfg } from './util/storytelling/animationCfg';
+export { processOpt, processCfg };
 
 export * from './components';
 export { jsx, render, Fragment } from './jsx';

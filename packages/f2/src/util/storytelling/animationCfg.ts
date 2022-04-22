@@ -80,7 +80,9 @@ export function processOpt(data: any[], xField, cycleOpt: CycleOpt) {
   Object.keys(_cycleOpt).map((step) => {
     const stepOpt = _cycleOpt[step]; // StepOpt
     if (isArray(stepOpt)) {
-      _cycleOpt[step] = getCfgArray(data, xField, stepOpt);
+      if (step === 'delay' || step === 'duration') {
+        _cycleOpt[step] = getCfgArray(data, xField, stepOpt);
+      }
     } else if (typeof stepOpt === 'string' || 'number') {
     } else {
       throw new Error('Only String/Number/Array supported by time options');
@@ -89,6 +91,14 @@ export function processOpt(data: any[], xField, cycleOpt: CycleOpt) {
 
   return _cycleOpt;
 }
+
+export default (cfg) => {
+  return () => {
+    return (originData, xField) => {
+      return processOpt(originData, xField, cfg);
+    };
+  };
+};
 //#endregion
 
 //#region 读取配置
@@ -116,17 +126,11 @@ function parseCfg(cfgs, item) {
   }
 }
 
-/**
- * 根据times配置，在动画执行前获取图形元素各自的动画配置
- * @param animationCfg times配置
- * @param item 图形元素对应的数据
- * @returns
- */
 export function getAnimationCfg(animationCfg, item) {
-  let typeCfg = {};
-  typeCfg = animationCfg;
+  const typeCfg = deepClone(animationCfg);
 
-  const { delay: uDelayCfg, duration: uDurationCfg, easing } = animationCfg;
+  //@ts-ignore
+  const { delay: uDelayCfg, duration: uDurationCfg, easing } = typeCfg;
 
   // delay处理
   if (uDelayCfg) {
@@ -142,6 +146,24 @@ export function getAnimationCfg(animationCfg, item) {
   if (easing) {
     typeCfg['easing'] = easing;
   }
+
   return typeCfg;
+}
+
+/**
+ * @param animation
+ * @param item
+ * @returns
+ */
+export function parseAnimationCfg(animation, item) {
+  let thisAnimation = {};
+  if (animation) {
+    thisAnimation = deepClone(animation);
+    Object.keys(animation).map((cycle) => {
+      let cycleCfg = animation[cycle];
+      thisAnimation[cycle] = getAnimationCfg(cycleCfg, item);
+    });
+  }
+  return thisAnimation;
 }
 //#endregion
