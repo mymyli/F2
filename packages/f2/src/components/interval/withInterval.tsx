@@ -102,7 +102,7 @@ export default (Views) => {
       const { selected } = state;
       const records = this.mapping();
 
-      const thisAnimation = this.processUserOpt(animation);
+      const thisAnimation = this.processAnimationOpt(animation);
 
       return (
         <View

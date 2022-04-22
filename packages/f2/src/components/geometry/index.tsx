@@ -573,7 +573,7 @@ class Geometry<
   }
 
   // 处理动画的差异化时间配置
-  processUserOpt(animation) {
+  processAnimationOpt(animation) {
     if (!animation) {
       return;
     }

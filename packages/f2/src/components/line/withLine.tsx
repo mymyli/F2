@@ -118,7 +118,8 @@ export default (View) => {
       const records = this.mapping();
 
       const { animation } = props;
-      const thisAnimation = this.processUserOpt(animation);
+      const thisAnimation = this.processAnimationOpt(animation);
+
       return <View {...props} coord={coord} records={records} animation={thisAnimation} />;
     }
   };

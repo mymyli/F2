@@ -111,15 +111,15 @@ export default (View) => {
       return theme.guide;
     }
 
-    processUserOpt(animation) {
+    processAnimationOpt(animation) {
       if (!animation) {
         return;
       }
 
-      const { chart } = this.props;
+      const { props } = this;
+      const { chart, data: originData } = props;
       const xScale = chart.getXScales()[0];
       const { field: xField } = xScale;
-      const { data: originData } = this.props; // 在Chart体系中生效，data由Chart传来
 
       const thisAnimation = deepClone(animation);
       Object.keys(animation).map((cycle) => {
@@ -141,8 +141,7 @@ export default (View) => {
       const { guideWidth, guideHeight, guideBBox } = this.state;
 
       //#region time Cfg
-      const origin = records[0];
-      const thisAnimation = this.processUserOpt(animation);
+      const thisAnimation = this.processAnimationOpt(animation);
       //#endregion
 
       return (

@@ -1,18 +1,7 @@
 import { deepMix, sortBy } from '@antv/util';
 import { init, getFieldValues } from './util';
 
-/* 参数标准
- * data 原数据集
- * field 作为排序依据的字段
- * isX 排序字段是否为x轴字段
- * start 排序起始值
- * base 时间起始值
- * unit 时间差
- */
-
-/**
- * 将数据根据指定字段的值排序，据此顺序决定数据的时间配置，时间配置成等差数列
- */
+// 根据数据在排序字段的值的顺序计算时间
 function getTimesByOrderOfValues_Linear(
   data: any[],
   field: string,
@@ -45,9 +34,7 @@ function getTimesByOrderOfValues_Linear(
   return times;
 }
 
-/**
- * 根据数据在指定字段的值获取时间配置
- */
+// 根据数据在排序字段的值计算时间
 function getTimesByValues(
   data: any[],
   field: string,
