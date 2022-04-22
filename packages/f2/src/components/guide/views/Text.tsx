@@ -47,7 +47,7 @@ export default (props: TextGuideProps, context) => {
             property: ['x', 'y'],
           },
         },
-        _thisAnimation
+        thisAnimation
       )}
     />
   );

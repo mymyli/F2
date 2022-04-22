@@ -39,7 +39,7 @@ export default (props) => {
                         property: ['x', 'y', 'startAngle', 'endAngle', 'r0', 'r'],
                       },
                     },
-                    _thisAnimation
+                    parsedAnimation
                   )}
                 />
               );
