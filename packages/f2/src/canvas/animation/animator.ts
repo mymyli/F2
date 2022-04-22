@@ -3,7 +3,7 @@ import { Animation, EasingFunction, InterpolateFunction } from './interface';
 import interpolate from './interpolate';
 import * as Easing from './easing';
 import { ElementStatus } from '../../jsx';
-import { isString } from '@antv/util';
+import { isString, isArray } from '@antv/util';
 
 class Animator {
   // 对应G的shape
@@ -43,7 +43,7 @@ class Animator {
         // @ts-ignore
         return name.interpolate(start, end);
       }
-      if (Array.isArray(name)) {
+      if (isArray(name)) {
         // @ts-ignore
         if (name.length > 2)
           throw new Error(
@@ -100,7 +100,7 @@ class Animator {
         attrs[name] = interpolates[i](t);
       }
       // 指定精确度
-      else if (Array.isArray(name)) {
+      else if (isArray(name)) {
         const attrName = name[0] as string;
         const digit = name[1];
         attrs[attrName] = interpolates[i](t).toFixed(digit);
