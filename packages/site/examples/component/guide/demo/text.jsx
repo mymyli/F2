@@ -1,6 +1,6 @@
 /** @jsx jsx */
-import { jsx, Canvas, Timeline, Chart, Interval, TextGuide } from '@antv/f2';
-import { processOpt, getAnimationCfg } from '@antv/f2';
+import { jsx, Canvas, Timeline, Chart, Interval, TextGuide, LineGuide } from '@antv/f2';
+import { telling } from '@antv/f2';
 
 const context = document.getElementById('container').getContext('2d');
 
@@ -12,14 +12,31 @@ const data = [
   { genre: 'Other', sold: 150, type: 'a' },
 ];
 
-const duration = processOpt(data, {
-  xField: 'genre',
-  fields: [{ field: 'sold', unit: 10, f: 'value' }],
-});
+const delay = [{ field: 'genre', unit: 500, base: 1000 }];
+const duration = [{ field: 'sold', unit: 10, f: 'value' }];
 
 const { clientHeight } = context.canvas;
 const offset = 20;
-const height = clientHeight - offset; // 文字标注起始位置
+const height = clientHeight - offset; // 文字标注起始高度
+
+const opt_interval = {
+  delay,
+  duration,
+};
+const opt_guide = {
+  delay,
+  duration,
+  property: [['text', 0], 'y', 'fillOpacity'],
+  start: {
+    text: 0,
+    y: height,
+    fillOpacity: 0.1,
+  },
+  end: {
+    fillOpacity: 1,
+  },
+};
+const { processUserOpt } = telling;
 
 const { props } = (
   <Canvas context={context} pixelRatio={window.devicePixelRatio}>
@@ -30,15 +47,7 @@ const { props } = (
           y="sold"
           color="genre"
           animation={{
-            appear: (item) => {
-              return getAnimationCfg(
-                {
-                  duration,
-                  easing: 'linear',
-                },
-                item
-              );
-            },
+            appear: processUserOpt(opt_interval),
           }}
         />
         {data.map((item) => {
@@ -57,28 +66,23 @@ const { props } = (
               offsetY={-10}
               offsetX={-10}
               animation={{
-                update: (item) => {
-                  return getAnimationCfg(
-                    {
-                      duration,
-                      property: ['fillOpacity', ['text', 0], 'y'],
-                      start: {
-                        fillOpacity: 0,
-                        text: 0,
-                        y: height,
-                      },
-                      end: {
-                        fillOpacity: 1,
-                        text: sold,
-                      },
-                    },
-                    item
-                  );
-                },
+                update: processUserOpt(opt_guide),
               }}
             />
           );
         })}
+        <LineGuide
+          records={[
+            { genre: 'min', sold: '150' },
+            { genre: 'max', sold: '150' },
+          ]}
+          style={{ stroke: 'green' }}
+          animation={{
+            update: {
+              duration: 1000,
+            },
+          }}
+        />
       </Chart>
     </Timeline>
   </Canvas>

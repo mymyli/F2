@@ -110,7 +110,7 @@ function _getTimeOfItem(cfgs, item) {
       if (origin) {
         key = origin[field];
       } else {
-        key = field;
+        key = item[field];
       }
     }
     time += times[key];

@@ -1,6 +1,6 @@
 /** @jsx jsx */
 import { jsx, Canvas, Chart, Interval, Axis } from '@antv/f2';
-import { processOpt, getAnimationCfg } from '@antv/f2';
+import { telling } from '@antv/f2';
 
 const data = [
   {
@@ -85,18 +85,15 @@ const data = [
   },
 ];
 
-const delay = processOpt(data, {
-  xField: '月份',
-  fields: [
-    { field: '月份', start: 'Feb.', unit: 2000 },
-    { field: 'name', start: 'Berlin', unit: 500 },
+const opt = {
+  delay: [
+    { field: '月份', unit: 2500 },
+    { field: 'name', start: 'Berlin', unit: 1000 },
   ],
-});
-const cfg = {
-  delay,
   duration: 1000,
-  easing: 'bounceOut',
+  easing: 'linear',
 };
+const { processUserOpt } = telling;
 
 const context = document.getElementById('container').getContext('2d');
 const { props } = (
@@ -113,9 +110,7 @@ const { props } = (
           marginRatio: 0.05, // 设置分组间柱子的间距
         }}
         animation={{
-          appear: (item) => {
-            return getAnimationCfg({ ...cfg }, item);
-          },
+          appear: processUserOpt(opt),
         }}
       />
     </Chart>
