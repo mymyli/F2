@@ -1,5 +1,5 @@
 import { jsx } from '../../../jsx';
-import { deepMix, isFunction } from '@antv/util';
+import { deepMix } from '@antv/util';
 import { Style } from '../../../types';
 import { parseAnimationCfg } from '../../../util/storytelling/animationCfg';
 

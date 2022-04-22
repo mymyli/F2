@@ -1,4 +1,4 @@
-import { deepMix, isFunction } from '@antv/util';
+import { deepMix } from '@antv/util';
 import { jsx } from '../../../jsx';
 import { parseAnimationCfg } from '../../../util/storytelling/animationCfg';
 
