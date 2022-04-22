@@ -24,11 +24,10 @@ export default (props: TextGuideProps, context) => {
   const posY = y + (offsetYNum || 0);
 
   //#region time Cfg
-  let thisAnimation = {};
   const { records } = props;
   const item = records[0];
 
-  thisAnimation = parseAnimationCfg(animation, item);
+  const parsedAnimation = parseAnimationCfg(animation, item);
   //#endregion
 
   return (
@@ -47,7 +46,7 @@ export default (props: TextGuideProps, context) => {
             property: ['x', 'y'],
           },
         },
-        thisAnimation
+        parsedAnimation
       )}
     />
   );

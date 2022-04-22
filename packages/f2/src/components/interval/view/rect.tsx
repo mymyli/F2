@@ -1,7 +1,6 @@
 import { deepMix, isFunction } from '@antv/util';
 import { jsx } from '../../../jsx';
-import { deepClone } from '../../../util/storytelling/util';
-import { getAnimationCfg, parseAnimationCfg } from '../../../util/storytelling/animationCfg';
+import { parseAnimationCfg } from '../../../util/storytelling/animationCfg';
 
 export default (props) => {
   const { records, animation } = props;
@@ -15,8 +14,7 @@ export default (props) => {
               const { key, xMin, xMax, yMin, yMax, color, shape } = item;
 
               //#region 处理接收的animation
-              let thisAnimation = {};
-              thisAnimation = parseAnimationCfg(animation, item);
+              const parsedAnimation = parseAnimationCfg(animation, item);
               //#endregion
 
               return (
@@ -47,7 +45,7 @@ export default (props) => {
                         property: ['x', 'y', 'width', 'height'],
                       },
                     },
-                    thisAnimation
+                    parsedAnimation
                   )}
                 />
               );

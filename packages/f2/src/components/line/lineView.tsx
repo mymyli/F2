@@ -2,6 +2,7 @@ import { deepMix, isArray, isFunction } from '@antv/util';
 import { deepClone } from '../../util/storytelling/util';
 import { jsx } from '../../jsx';
 import { LineViewProps } from './types';
+import { parseAnimationCfg } from '../../util/storytelling/animationCfg';
 
 function concatPoints(children) {
   let result = [];
@@ -110,23 +111,8 @@ export default (props: LineViewProps) => {
         const { key, children } = record;
 
         //#region 差异化配置处理
-        // 复刻一份 defaultAnimation 作为该多段线的默认动画
         const thisDefaultAnimation = deepClone(defaultAnimation);
-
-        // 解析动画配置，获得改该多段线的差异化动画配置
-        let thisAnimation = {};
-        if (animation) {
-          Object.keys(animation).map((animationType) => {
-            let _animationCfg = animation[animationType];
-            // 如果动画配置为函数，则执行该函数获取配置对象
-            if (isFunction(_animationCfg)) {
-              _animationCfg = _animationCfg(key);
-            }
-            thisAnimation[animationType] = _animationCfg;
-          });
-        }
-
-        // 用差异化配置更新默认动画配置
+        const thisAnimation = parseAnimationCfg(animation, key);
         const finalAnimation = deepMix(thisDefaultAnimation, thisAnimation);
         //#endregion
 
