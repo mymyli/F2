@@ -572,7 +572,7 @@ class Geometry<
     return items;
   }
 
-  // 根据传入配置计算获得AnimationCycle
+  // 根据传入组件的 animation 计算获得AnimationCycle
   getAnimationCycle(animationCycle) {
     if (!animationCycle) {
       return;
@@ -582,11 +582,10 @@ class Geometry<
     const { data: originData } = this.props; // 在Chart体系中生效，data由Chart传来
 
     const _animationCycle = deepClone(animationCycle);
-    Object.keys(animationCycle).map((cycle) => {
-      const typeCfg = _animationCycle[cycle];
-      if (isFunction(typeCfg)) {
-        const f_processOpt = typeCfg();
-        _animationCycle[cycle] = f_processOpt(originData, xField as string);
+    Object.keys(animationCycle).map((step) => {
+      const animation = _animationCycle[step];
+      if (isFunction(animation)) {
+        _animationCycle[step] = animation()(originData, xField as string);
       }
     });
     return _animationCycle;

@@ -26,7 +26,6 @@ function registerTimeFunction(key: string, f: Function) {
   timeFunctions[key] = f;
 }
 
-// 计算时间
 function _getTimesOfField(data: any[], xField, fieldOpt: FieldOpt) {
   const { field, start, base, unit, f } = fieldOpt;
 
@@ -43,8 +42,8 @@ function _getTimesOfField(data: any[], xField, fieldOpt: FieldOpt) {
   return timeFunc(data, field, isX, start, base, unit);
 }
 
-// 得到某个需要排序字段的差异化动画配置
-function _assembleCfgOfField(data, xField, fieldOpt) {
+// 得到某个排序字段的差异化动画配置
+function _assembleTimeCfgOfField(data, xField, fieldOpt) {
   const { field } = fieldOpt;
   const times = _getTimesOfField(data, xField, fieldOpt);
   return {
@@ -54,10 +53,10 @@ function _assembleCfgOfField(data, xField, fieldOpt) {
 }
 
 // 得到所有排序字段的差异化动画配置
-function _assembleCfgOfAllFields(data, xField, fieldsOpt: FieldsOpt): TimeCfgArray {
+function _assembleTimeCfgs(data, xField, fieldsOpt: FieldsOpt): TimeCfgArray {
   let cfgs = [];
   fieldsOpt.forEach((fieldOpt) => {
-    cfgs.push(_assembleCfgOfField(data, xField, fieldOpt));
+    cfgs.push(_assembleTimeCfgOfField(data, xField, fieldOpt));
   });
   return cfgs;
 }
@@ -67,19 +66,19 @@ function assembleAnimation(data, xField, animationOpt) {
   if (!data || !data.length) throw new Error('"data" required when process user option');
   if (!xField) throw new Error('"xField" required by time configuration but get null');
 
-  const animationCfg = deepClone(animationOpt);
-  Object.keys(animationOpt).map((step) => {
-    const stepOpt = animationOpt[step];
-    if (isArray(stepOpt)) {
-      if (step === 'delay' || step === 'duration') {
-        animationCfg[step] = _assembleCfgOfAllFields(data, xField, stepOpt);
+  const animation = deepClone(animationOpt);
+  Object.keys(animationOpt).map((key) => {
+    const cfg = animationOpt[key];
+    if (isArray(cfg)) {
+      if (key === 'delay' || key === 'duration') {
+        animation[key] = _assembleTimeCfgs(data, xField, cfg);
       }
-    } else if (!isString(stepOpt) && !isNumber(stepOpt)) {
+    } else if (!isString(cfg) && !isNumber(cfg)) {
       throw new Error('Only String/Number/Array supported by time options');
     }
   });
 
-  return animationCfg;
+  return animation;
 }
 
 // 入口api
@@ -116,7 +115,7 @@ function _getTimeOfJSXElement(cfgs, item) {
   return time;
 }
 
-// jsx element读取配置形成自身的Animation
+// jsx element读取 animation 配置形成自身的Animation
 function _getAnimationOfJSXElement(animation, item) {
   const _animation = deepClone(animation);
 
@@ -132,14 +131,14 @@ function _getAnimationOfJSXElement(animation, item) {
   return _animation;
 }
 
-// jsx element读取配置形成自身的AnimationCycle
+// jsx element读取 animation cycle 配置形成自身的AnimationCycle
 function getAnimationCycleOfJSXElement(animationCycle, item): AnimationCycle {
   let _animationCycle = {};
   if (animationCycle) {
     _animationCycle = deepClone(animationCycle);
-    Object.keys(animationCycle).map((cycle) => {
-      let cycleCfg = animationCycle[cycle];
-      _animationCycle[cycle] = _getAnimationOfJSXElement(cycleCfg, item);
+    Object.keys(animationCycle).map((step) => {
+      let animation = animationCycle[step];
+      _animationCycle[step] = _getAnimationOfJSXElement(animation, item);
     });
   }
   return _animationCycle;
