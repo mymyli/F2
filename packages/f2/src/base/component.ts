@@ -50,7 +50,7 @@ class Component<P = any, S = any> {
     this.animate = animate;
   }
 
-  processAnimationOpt(animation) {}
+  getAnimationCycle(animationCycle) {}
 }
 
 // 标识是否是组件

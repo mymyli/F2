@@ -118,9 +118,9 @@ export default (View) => {
       const records = this.mapping();
 
       const { animation } = props;
-      const thisAnimation = this.processAnimationOpt(animation);
+      const animationCycle = this.getAnimationCycle(animation);
 
-      return <View {...props} coord={coord} records={records} animation={thisAnimation} />;
+      return <View {...props} coord={coord} records={records} animation={animationCycle} />;
     }
   };
 };

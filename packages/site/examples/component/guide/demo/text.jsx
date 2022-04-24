@@ -1,6 +1,6 @@
 /** @jsx jsx */
 import { jsx, Canvas, Timeline, Chart, Interval, TextGuide, LineGuide } from '@antv/f2';
-import { getAnimationCfg } from '@antv/f2';
+import { generateAnimation } from '@antv/f2';
 
 const context = document.getElementById('container').getContext('2d');
 
@@ -46,7 +46,7 @@ const { props } = (
           y="sold"
           color="genre"
           animation={{
-            appear: () => getAnimationCfg(opt_interval),
+            appear: () => generateAnimation(opt_interval),
           }}
         />
         {data.map((item) => {
@@ -65,7 +65,7 @@ const { props } = (
               offsetY={-10}
               offsetX={-10}
               animation={{
-                update: () => getAnimationCfg(opt_guide),
+                update: () => generateAnimation(opt_guide),
               }}
             />
           );

@@ -1,7 +1,7 @@
 import { jsx } from '../../../jsx';
 import { deepMix } from '@antv/util';
 import { Style } from '../../../types';
-import { parseAnimationCfg } from '../../../util/storytelling/animationCfg';
+import { getAnimationCycleOfJSXElement } from '../../../util/storytelling/animationCfg';
 
 type TextGuideProps = {
   points?: { x: number; y: number }[] | null;
@@ -27,7 +27,7 @@ export default (props: TextGuideProps, context) => {
   const { records } = props;
   const item = records[0];
 
-  const parsedAnimation = parseAnimationCfg(animation, item);
+  const parsedAnimation = getAnimationCycleOfJSXElement(animation, item);
   //#endregion
 
   return (

@@ -102,7 +102,7 @@ export default (Views) => {
       const { selected } = state;
       const records = this.mapping();
 
-      const thisAnimation = this.processAnimationOpt(animation);
+      const animationCycle = this.getAnimationCycle(animation);
 
       return (
         <View
@@ -110,7 +110,7 @@ export default (Views) => {
           records={records}
           selected={selected}
           shape={shape}
-          animation={thisAnimation}
+          animation={animationCycle}
           showLabel={showLabel}
           labelCfg={labelCfg}
           LabelView={LabelView}

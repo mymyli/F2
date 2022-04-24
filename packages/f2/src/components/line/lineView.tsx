@@ -2,7 +2,7 @@ import { deepMix, isArray, isFunction } from '@antv/util';
 import { deepClone } from '../../util/storytelling/util';
 import { jsx } from '../../jsx';
 import { LineViewProps } from './types';
-import { parseAnimationCfg } from '../../util/storytelling/animationCfg';
+import { getAnimationCycleOfJSXElement } from '../../util/storytelling/animationCfg';
 
 function concatPoints(children) {
   let result = [];
@@ -112,8 +112,8 @@ export default (props: LineViewProps) => {
 
         //#region 差异化配置处理
         const thisDefaultAnimation = deepClone(defaultAnimation);
-        const thisAnimation = parseAnimationCfg(animation, key);
-        const finalAnimation = deepMix(thisDefaultAnimation, thisAnimation);
+        const thisVarifiedAnimation = getAnimationCycleOfJSXElement(animation, key);
+        const finalAnimation = deepMix(thisDefaultAnimation, thisVarifiedAnimation);
         //#endregion
 
         return (

@@ -1,6 +1,6 @@
 /** @jsx jsx */
 import { jsx, Canvas, Chart, Interval, Tooltip, Axis } from '@antv/f2';
-import { getAnimationCfg } from '@antv/f2';
+import { generateAnimation } from '@antv/f2';
 
 const data = [
   {
@@ -61,7 +61,7 @@ const { props } = (
         x="year"
         y="sales"
         animation={{
-          appear: () => getAnimationCfg(opt),
+          appear: () => generateAnimation(opt),
         }}
       />
       <Tooltip />

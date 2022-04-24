@@ -1,6 +1,6 @@
 /** @jsx jsx */
 import { jsx, Canvas, Chart, Interval, Axis } from '@antv/f2';
-import { getAnimationCfg } from '@antv/f2';
+import { generateAnimation } from '@antv/f2';
 
 const data = [
   {
@@ -109,7 +109,7 @@ const { props } = (
           marginRatio: 0.05, // 设置分组间柱子的间距
         }}
         animation={{
-          appear: () => getAnimationCfg(opt),
+          appear: () => generateAnimation(opt),
         }}
       />
     </Chart>

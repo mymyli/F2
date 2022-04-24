@@ -572,24 +572,24 @@ class Geometry<
     return items;
   }
 
-  // 处理动画的差异化时间配置
-  processAnimationOpt(animation) {
-    if (!animation) {
+  // 根据传入配置计算获得AnimationCycle
+  getAnimationCycle(animationCycle) {
+    if (!animationCycle) {
       return;
     }
 
     const { field: xField } = this.attrs.x.scale;
     const { data: originData } = this.props; // 在Chart体系中生效，data由Chart传来
 
-    const thisAnimation = deepClone(animation);
-    Object.keys(animation).map((cycle) => {
-      const typeCfg = thisAnimation[cycle];
+    const _animationCycle = deepClone(animationCycle);
+    Object.keys(animationCycle).map((cycle) => {
+      const typeCfg = _animationCycle[cycle];
       if (isFunction(typeCfg)) {
         const f_processOpt = typeCfg();
-        thisAnimation[cycle] = f_processOpt(originData, xField as string);
+        _animationCycle[cycle] = f_processOpt(originData, xField as string);
       }
     });
-    return thisAnimation;
+    return _animationCycle;
   }
 }
 

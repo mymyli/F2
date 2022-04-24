@@ -1,6 +1,6 @@
 /** @jsx jsx */
 import { jsx, Canvas, Chart, Interval, Axis, Tooltip, Legend } from '@antv/f2';
-import { getAnimationCfg } from '@antv/f2';
+import { generateAnimation } from '@antv/f2';
 
 const context = document.getElementById('container').getContext('2d');
 
@@ -31,7 +31,7 @@ const { props } = (
         y="sold"
         color="genre"
         animation={{
-          appear: () => getAnimationCfg(opt),
+          appear: () => generateAnimation(opt),
         }}
       />
     </Chart>

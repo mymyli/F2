@@ -1,7 +1,7 @@
 /** @jsx jsx */
 import { jsx, Canvas, Chart, Line, Axis, Legend } from '@antv/f2';
 import _ from 'lodash';
-import { getAnimationCfg } from '@antv/f2';
+import { generateAnimation } from '@antv/f2';
 
 fetch('https://gw.alipayobjects.com/os/antfincdn/OVMtvjbnut/series-line.json')
   .then((res) => res.json())
@@ -29,7 +29,7 @@ fetch('https://gw.alipayobjects.com/os/antfincdn/OVMtvjbnut/series-line.json')
             lineWidth="4px"
             color="type"
             animation={{
-              appear: () => getAnimationCfg(opt),
+              appear: () => generateAnimation(opt),
             }}
           />
           <Legend

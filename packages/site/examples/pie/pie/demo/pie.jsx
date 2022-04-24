@@ -1,6 +1,6 @@
 /** @jsx jsx */
 import { jsx, Canvas, Chart, Interval, Legend } from '@antv/f2';
-import { getAnimationCfg } from '@antv/f2';
+import { generateAnimation } from '@antv/f2';
 
 const data = [
   {
@@ -61,7 +61,7 @@ const { props } = (
           range: ['#1890FF', '#13C2C2', '#2FC25B', '#FACC14', '#F04864', '#8543E0'],
         }}
         animation={{
-          appear: () => getAnimationCfg(opt),
+          appear: () => generateAnimation(opt),
         }}
       />
       <Legend position="right" />

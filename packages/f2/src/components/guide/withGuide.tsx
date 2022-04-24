@@ -111,8 +111,8 @@ export default (View) => {
       return theme.guide;
     }
 
-    processAnimationOpt(animation) {
-      if (!animation) {
+    getAnimationCycle(animationCycle) {
+      if (!animationCycle) {
         return;
       }
 
@@ -121,15 +121,15 @@ export default (View) => {
       const xScale = chart.getXScales()[0];
       const { field: xField } = xScale;
 
-      const thisAnimation = deepClone(animation);
-      Object.keys(animation).map((cycle) => {
-        const typeCfg = thisAnimation[cycle];
+      const _animationCycle = deepClone(animationCycle);
+      Object.keys(animationCycle).map((cycle) => {
+        const typeCfg = _animationCycle[cycle];
         if (isFunction(typeCfg)) {
           const f_processOpt = typeCfg();
-          thisAnimation[cycle] = f_processOpt(originData, xField as string);
+          _animationCycle[cycle] = f_processOpt(originData, xField as string);
         }
       });
-      return thisAnimation;
+      return _animationCycle;
     }
 
     render() {
@@ -141,7 +141,7 @@ export default (View) => {
       const { guideWidth, guideHeight, guideBBox } = this.state;
 
       //#region time Cfg
-      const thisAnimation = this.processAnimationOpt(animation);
+      const animationCycle = this.getAnimationCycle(animation);
       //#endregion
 
       return (
@@ -156,7 +156,7 @@ export default (View) => {
           guideWidth={guideWidth}
           guideHeight={guideHeight}
           guideBBox={guideBBox}
-          animation={thisAnimation}
+          animation={animationCycle}
         />
       );
     }

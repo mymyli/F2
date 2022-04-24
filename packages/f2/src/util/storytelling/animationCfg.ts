@@ -1,6 +1,6 @@
-import { isArray, isFunction, isNumber, isString } from '@antv/util';
+import { deepClone, isArray, isFunction, isNumber, isString } from '@antv/util';
+import { AnimationCycle } from '../../canvas/animation/interface';
 import timeFunctions from './timeFunctions';
-import { deepClone } from './util';
 
 //#region types
 type FieldOpt = {
@@ -53,7 +53,7 @@ function _assembleCfgOfField(data, xField, fieldOpt) {
   };
 }
 
-// 得到所有需要排序的字段得到差异化动画配置
+// 得到所有排序字段的差异化动画配置
 function _assembleCfgOfAllFields(data, xField, fieldsOpt: FieldsOpt): TimeCfgArray {
   let cfgs = [];
   fieldsOpt.forEach((fieldOpt) => {
@@ -62,8 +62,8 @@ function _assembleCfgOfAllFields(data, xField, fieldsOpt: FieldsOpt): TimeCfgArr
   return cfgs;
 }
 
-// 根据用户设置得到动画配置
-function assembleAnimationCfg(data, xField, animationOpt) {
+// 根据用户设置得到Animation
+function assembleAnimation(data, xField, animationOpt) {
   if (!data || !data.length) throw new Error('"data" required when process user option');
   if (!xField) throw new Error('"xField" required by time configuration but get null');
 
@@ -82,15 +82,15 @@ function assembleAnimationCfg(data, xField, animationOpt) {
   return animationCfg;
 }
 
-// 作为入口api接收用户设置并进行处理
-function getAnimationCfg(userOpt) {
+// 入口api
+function generateAnimation(userOpt) {
   return (originData, xField) => {
-    return assembleAnimationCfg(originData, xField, userOpt);
+    return assembleAnimation(originData, xField, userOpt);
   };
 }
 
-// 解析得到时间配置
-function _getTimeOfItem(cfgs, item) {
+// jsx element从delay或duration中读取自身的时间配置
+function _getTimeOfJSXElement(cfgs, item) {
   let time = 0;
 
   if (typeof cfgs === 'number') {
@@ -116,33 +116,38 @@ function _getTimeOfItem(cfgs, item) {
   return time;
 }
 
-// 解析得到某一类型的动画配置
-function _parseCfg(animationCfg, item) {
-  const cfgOfItem = deepClone(animationCfg);
+// jsx element读取配置形成自身的Animation
+function _getAnimationOfJSXElement(animation, item) {
+  const _animation = deepClone(animation);
 
   //@ts-ignore
-  const { delay: uDelayCfg, duration: uDurationCfg } = cfgOfItem;
-  if (uDelayCfg) {
-    cfgOfItem['delay'] = _getTimeOfItem(uDelayCfg, item);
+  const { delay, duration } = cfgOfItem;
+  if (delay) {
+    _animation['delay'] = _getTimeOfJSXElement(delay, item);
   }
-  if (uDurationCfg) {
-    cfgOfItem['duration'] = _getTimeOfItem(uDurationCfg, item);
+  if (duration) {
+    _animation['duration'] = _getTimeOfJSXElement(duration, item);
   }
 
-  return cfgOfItem;
+  return _animation;
 }
 
-// 解析得到图形元素自身的完整动画配置
-function parseAnimationCfg(animation, item) {
-  let thisAnimation = {};
-  if (animation) {
-    thisAnimation = deepClone(animation);
-    Object.keys(animation).map((cycle) => {
-      let cycleCfg = animation[cycle];
-      thisAnimation[cycle] = _parseCfg(cycleCfg, item);
+// jsx element读取配置形成自身的AnimationCycle
+function getAnimationCycleOfJSXElement(animationCycle, item): AnimationCycle {
+  let _animationCycle = {};
+  if (animationCycle) {
+    _animationCycle = deepClone(animationCycle);
+    Object.keys(animationCycle).map((cycle) => {
+      let cycleCfg = animationCycle[cycle];
+      _animationCycle[cycle] = _getAnimationOfJSXElement(cycleCfg, item);
     });
   }
-  return thisAnimation;
+  return _animationCycle;
 }
 
-export { registerTimeFunction, getAnimationCfg, assembleAnimationCfg, parseAnimationCfg };
+export {
+  registerTimeFunction,
+  generateAnimation,
+  assembleAnimation,
+  getAnimationCycleOfJSXElement,
+};

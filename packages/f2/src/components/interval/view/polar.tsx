@@ -1,6 +1,6 @@
 import { jsx } from '../../../jsx';
 import { deepMix } from '@antv/util';
-import { parseAnimationCfg } from '../../../util/storytelling/animationCfg';
+import { getAnimationCycleOfJSXElement } from '../../../util/storytelling/animationCfg';
 
 export default (props) => {
   const { coord, records, animation } = props;
@@ -15,7 +15,7 @@ export default (props) => {
               const { key, xMin, xMax, yMin, yMax, color, shape } = item;
 
               //#region 处理接收的animation
-              const parsedAnimation = parseAnimationCfg(animation, item);
+              const parsedAnimation = getAnimationCycleOfJSXElement(animation, item);
               //#endregion
 
               return (
