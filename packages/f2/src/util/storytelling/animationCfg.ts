@@ -73,8 +73,6 @@ function assembleAnimation(data, xField, animationOpt) {
       if (key === 'delay' || key === 'duration') {
         animation[key] = _assembleTimeCfgs(data, xField, cfg);
       }
-    } else if (!isString(cfg) && !isNumber(cfg)) {
-      throw new Error('Only String/Number/Array supported by time options');
     }
   });
 
