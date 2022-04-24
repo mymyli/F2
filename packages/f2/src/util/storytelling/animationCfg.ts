@@ -120,7 +120,7 @@ function _getAnimationOfJSXElement(animation, item) {
   const _animation = deepClone(animation);
 
   //@ts-ignore
-  const { delay, duration } = cfgOfItem;
+  const { delay, duration } = _animation;
   if (delay) {
     _animation['delay'] = _getTimeOfJSXElement(delay, item);
   }
