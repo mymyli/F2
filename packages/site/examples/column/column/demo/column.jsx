@@ -1,6 +1,6 @@
 /** @jsx jsx */
 import { jsx, Canvas, Chart, Interval, Tooltip, Axis } from '@antv/f2';
-import { telling } from '@antv/f2';
+import { getAnimationCfg } from '@antv/f2';
 
 const data = [
   {
@@ -43,7 +43,6 @@ const opt = {
   duration: 1000,
   easing: 'bounceOut',
 };
-const { processUserOpt } = telling;
 
 const context = document.getElementById('container').getContext('2d');
 const { props } = (
@@ -62,7 +61,7 @@ const { props } = (
         x="year"
         y="sales"
         animation={{
-          appear: processUserOpt(opt),
+          appear: () => getAnimationCfg(opt),
         }}
       />
       <Tooltip />

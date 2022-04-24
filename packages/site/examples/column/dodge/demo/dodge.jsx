@@ -1,6 +1,6 @@
 /** @jsx jsx */
 import { jsx, Canvas, Chart, Interval, Axis } from '@antv/f2';
-import { telling } from '@antv/f2';
+import { getAnimationCfg } from '@antv/f2';
 
 const data = [
   {
@@ -93,7 +93,6 @@ const opt = {
   duration: 1000,
   easing: 'linear',
 };
-const { processUserOpt } = telling;
 
 const context = document.getElementById('container').getContext('2d');
 const { props } = (
@@ -110,7 +109,7 @@ const { props } = (
           marginRatio: 0.05, // 设置分组间柱子的间距
         }}
         animation={{
-          appear: processUserOpt(opt),
+          appear: () => getAnimationCfg(opt),
         }}
       />
     </Chart>

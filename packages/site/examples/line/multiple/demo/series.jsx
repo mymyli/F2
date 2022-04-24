@@ -1,7 +1,7 @@
 /** @jsx jsx */
 import { jsx, Canvas, Chart, Line, Axis, Legend } from '@antv/f2';
 import _ from 'lodash';
-import { telling } from '@antv/f2';
+import { getAnimationCfg } from '@antv/f2';
 
 fetch('https://gw.alipayobjects.com/os/antfincdn/OVMtvjbnut/series-line.json')
   .then((res) => res.json())
@@ -10,7 +10,6 @@ fetch('https://gw.alipayobjects.com/os/antfincdn/OVMtvjbnut/series-line.json')
       delay: [{ field: 'type', unit: 1000 }],
       duration: 2000,
     };
-    const { processUserOpt } = telling;
 
     const context = document.getElementById('container').getContext('2d');
     const { props } = (
@@ -30,7 +29,7 @@ fetch('https://gw.alipayobjects.com/os/antfincdn/OVMtvjbnut/series-line.json')
             lineWidth="4px"
             color="type"
             animation={{
-              appear: processUserOpt(opt),
+              appear: () => getAnimationCfg(opt),
             }}
           />
           <Legend

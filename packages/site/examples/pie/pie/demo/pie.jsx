@@ -1,6 +1,6 @@
 /** @jsx jsx */
 import { jsx, Canvas, Chart, Interval, Legend } from '@antv/f2';
-import { telling } from '@antv/f2';
+import { getAnimationCfg } from '@antv/f2';
 
 const data = [
   {
@@ -41,7 +41,6 @@ const opt = {
   easing: 'linear',
   property: ['startAngle', 'r'], // 需要指定参与动画的属性
 };
-const { processUserOpt } = telling;
 
 const context = document.getElementById('container').getContext('2d');
 const { props } = (
@@ -62,7 +61,7 @@ const { props } = (
           range: ['#1890FF', '#13C2C2', '#2FC25B', '#FACC14', '#F04864', '#8543E0'],
         }}
         animation={{
-          appear: processUserOpt(opt),
+          appear: () => getAnimationCfg(opt),
         }}
       />
       <Legend position="right" />

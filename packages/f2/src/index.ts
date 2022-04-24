@@ -13,8 +13,12 @@ import Chart from './chart';
 import { jsx as createElement } from './jsx';
 import { renderShape } from './base/diff';
 
-import * as telling from './util/storytelling/animationCfg';
-export { telling };
+export {
+  registerTimeFunction,
+  getAnimationCfg,
+  assembleAnimationCfg,
+  parseAnimationCfg,
+} from './util/storytelling/animationCfg';
 
 export * from './components';
 export { jsx, render, Fragment } from './jsx';

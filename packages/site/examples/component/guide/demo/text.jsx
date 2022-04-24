@@ -1,6 +1,6 @@
 /** @jsx jsx */
 import { jsx, Canvas, Timeline, Chart, Interval, TextGuide, LineGuide } from '@antv/f2';
-import { telling } from '@antv/f2';
+import { getAnimationCfg } from '@antv/f2';
 
 const context = document.getElementById('container').getContext('2d');
 
@@ -36,7 +36,6 @@ const opt_guide = {
     fillOpacity: 1,
   },
 };
-const { processUserOpt } = telling;
 
 const { props } = (
   <Canvas context={context} pixelRatio={window.devicePixelRatio}>
@@ -47,7 +46,7 @@ const { props } = (
           y="sold"
           color="genre"
           animation={{
-            appear: processUserOpt(opt_interval),
+            appear: () => getAnimationCfg(opt_interval),
           }}
         />
         {data.map((item) => {
@@ -66,7 +65,7 @@ const { props } = (
               offsetY={-10}
               offsetX={-10}
               animation={{
-                update: processUserOpt(opt_guide),
+                update: () => getAnimationCfg(opt_guide),
               }}
             />
           );

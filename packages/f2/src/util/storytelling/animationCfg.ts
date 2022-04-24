@@ -83,11 +83,9 @@ function assembleAnimationCfg(data, xField, animationOpt) {
 }
 
 // 作为入口api接收用户设置并进行处理
-function processUserOpt(userOpt) {
-  return () => {
-    return (originData, xField) => {
-      return assembleAnimationCfg(originData, xField, userOpt);
-    };
+function getAnimationCfg(userOpt) {
+  return (originData, xField) => {
+    return assembleAnimationCfg(originData, xField, userOpt);
   };
 }
 
@@ -147,4 +145,4 @@ function parseAnimationCfg(animation, item) {
   return thisAnimation;
 }
 
-export { registerTimeFunction, processUserOpt, assembleAnimationCfg, parseAnimationCfg };
+export { registerTimeFunction, getAnimationCfg, assembleAnimationCfg, parseAnimationCfg };

@@ -1,6 +1,6 @@
 /** @jsx jsx */
 import { jsx, Canvas, Chart, Interval, Axis, Tooltip, Legend } from '@antv/f2';
-import { telling } from '@antv/f2';
+import { getAnimationCfg } from '@antv/f2';
 
 const context = document.getElementById('container').getContext('2d');
 
@@ -18,7 +18,6 @@ const opt = {
   duration: 1000,
   easing: 'bounceOut',
 };
-const { processUserOpt } = telling;
 
 const { props } = (
   <Canvas context={context} pixelRatio={window.devicePixelRatio}>
@@ -32,7 +31,7 @@ const { props } = (
         y="sold"
         color="genre"
         animation={{
-          appear: processUserOpt(opt),
+          appear: () => getAnimationCfg(opt),
         }}
       />
     </Chart>
